@@ -19,12 +19,23 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
   });
+  const [passwordError, setPasswordError] = useState('');
   const { toast } = useToast();
   const { login, register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clear previous password error
+    setPasswordError('');
+    
+    // Check password confirmation for signup
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
     
     try {
       if (isLogin) {
@@ -55,6 +66,23 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
       ...prev,
       [e.target.name]: e.target.value
     }));
+    
+    // Clear password error when user types
+    if (passwordError && (e.target.name === 'password' || e.target.name === 'confirmPassword')) {
+      setPasswordError('');
+    }
+  };
+
+  const handleModeSwitch = () => {
+    setIsLogin(!isLogin);
+    setPasswordError('');
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+    });
   };
 
   return (
@@ -136,6 +164,25 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
               />
             </div>
 
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required={!isLogin}
+                  className={passwordError ? 'border-red-500' : ''}
+                />
+                {passwordError && (
+                  <p className="text-sm text-red-500 mt-1">{passwordError}</p>
+                )}
+              </div>
+            )}
+
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
@@ -147,7 +194,7 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
           <div className="text-center">
             <Button
               variant="link"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={handleModeSwitch}
               className="text-red-600 hover:text-red-700"
             >
               {isLogin 
