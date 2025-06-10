@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Utensils, Clock, Star, Truck, Phone, Mail, MapPin, Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,22 +25,130 @@ const Index = () => {
 
   const menuItems = {
     chicken: [
-      { id: 1, name: 'Whole Chicken', price: 280, unit: 'kg', description: 'Fresh whole chicken, perfect for family meals', rating: 4.5, reviews: 120 },
-      { id: 2, name: 'Chicken Curry Cut', price: 320, unit: 'kg', description: 'Pre-cut chicken pieces for easy cooking', rating: 4.7, reviews: 95 },
-      { id: 3, name: 'Chicken Breast', price: 420, unit: 'kg', description: 'Boneless chicken breast, high protein', rating: 4.8, reviews: 87 },
-      { id: 4, name: 'Chicken Wings', price: 380, unit: 'kg', description: 'Fresh chicken wings for BBQ and grilling', rating: 4.6, reviews: 65 },
+      { 
+        id: 1, 
+        name: 'Whole Chicken', 
+        price: 280, 
+        unit: 'kg', 
+        description: 'Fresh whole chicken, perfect for family meals', 
+        rating: 4.5, 
+        reviews: 120,
+        image: 'https://images.unsplash.com/photo-1518492104633-130d0cc84637?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 2, 
+        name: 'Chicken Curry Cut', 
+        price: 320, 
+        unit: 'kg', 
+        description: 'Pre-cut chicken pieces for easy cooking', 
+        rating: 4.7, 
+        reviews: 95,
+        image: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 3, 
+        name: 'Chicken Breast', 
+        price: 420, 
+        unit: 'kg', 
+        description: 'Boneless chicken breast, high protein', 
+        rating: 4.8, 
+        reviews: 87,
+        image: 'https://images.unsplash.com/photo-1588347818131-c6c3d7b6b4aa?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 4, 
+        name: 'Chicken Wings', 
+        price: 380, 
+        unit: 'kg', 
+        description: 'Fresh chicken wings for BBQ and grilling', 
+        rating: 4.6, 
+        reviews: 65,
+        image: 'https://images.unsplash.com/photo-1527477396-1741a5b93ca3?w=400&h=300&fit=crop'
+      },
     ],
     mutton: [
-      { id: 5, name: 'Mutton Curry Cut', price: 680, unit: 'kg', description: 'Fresh mutton pieces with bone', rating: 4.4, reviews: 78 },
-      { id: 6, name: 'Mutton Boneless', price: 820, unit: 'kg', description: 'Premium boneless mutton pieces', rating: 4.6, reviews: 92 },
-      { id: 7, name: 'Mutton Keema', price: 720, unit: 'kg', description: 'Fresh minced mutton', rating: 4.5, reviews: 56 },
-      { id: 8, name: 'Mutton Chops', price: 750, unit: 'kg', description: 'Tender mutton chops for special occasions', rating: 4.7, reviews: 43 },
+      { 
+        id: 5, 
+        name: 'Mutton Curry Cut', 
+        price: 680, 
+        unit: 'kg', 
+        description: 'Fresh mutton pieces with bone', 
+        rating: 4.4, 
+        reviews: 78,
+        image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 6, 
+        name: 'Mutton Boneless', 
+        price: 820, 
+        unit: 'kg', 
+        description: 'Premium boneless mutton pieces', 
+        rating: 4.6, 
+        reviews: 92,
+        image: 'https://images.unsplash.com/photo-1588347818131-c6c3d7b6b4aa?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 7, 
+        name: 'Mutton Keema', 
+        price: 720, 
+        unit: 'kg', 
+        description: 'Fresh minced mutton', 
+        rating: 4.5, 
+        reviews: 56,
+        image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 8, 
+        name: 'Mutton Chops', 
+        price: 750, 
+        unit: 'kg', 
+        description: 'Tender mutton chops for special occasions', 
+        rating: 4.7, 
+        reviews: 43,
+        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop'
+      },
     ],
     kabab: [
-      { id: 9, name: 'Seekh Kabab', price: 380, unit: 'kg', description: 'Spiced minced meat on skewers', rating: 4.6, reviews: 134 },
-      { id: 10, name: 'Chicken Tikka', price: 450, unit: 'kg', description: 'Marinated chicken pieces', rating: 4.8, reviews: 156 },
-      { id: 11, name: 'Shami Kabab', price: 32, unit: 'piece', description: 'Traditional spiced patties', rating: 4.5, reviews: 89 },
-      { id: 12, name: 'Galouti Kabab', price: 45, unit: 'piece', description: 'Melt-in-mouth Lucknowi specialty', rating: 4.9, reviews: 67 },
+      { 
+        id: 9, 
+        name: 'Seekh Kabab', 
+        price: 380, 
+        unit: 'kg', 
+        description: 'Spiced minced meat on skewers', 
+        rating: 4.6, 
+        reviews: 134,
+        image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 10, 
+        name: 'Chicken Tikka', 
+        price: 450, 
+        unit: 'kg', 
+        description: 'Marinated chicken pieces', 
+        rating: 4.8, 
+        reviews: 156,
+        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 11, 
+        name: 'Shami Kabab', 
+        price: 32, 
+        unit: 'piece', 
+        description: 'Traditional spiced patties', 
+        rating: 4.5, 
+        reviews: 89,
+        image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&h=300&fit=crop'
+      },
+      { 
+        id: 12, 
+        name: 'Galouti Kabab', 
+        price: 45, 
+        unit: 'piece', 
+        description: 'Melt-in-mouth Lucknowi specialty', 
+        rating: 4.9, 
+        reviews: 67,
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop'
+      },
     ],
   };
 
@@ -315,8 +422,12 @@ const Index = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map((item) => (
               <Card key={item.id} className="hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden">
-                <div className="h-48 bg-gradient-to-br from-orange-200 to-red-200 flex items-center justify-center">
-                  <Utensils className="text-6xl text-red-600" />
+                <div className="h-48 overflow-hidden">
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  />
                 </div>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">{item.name}</h3>
