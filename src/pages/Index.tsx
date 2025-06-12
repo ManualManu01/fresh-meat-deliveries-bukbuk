@@ -11,6 +11,8 @@ import ProfilePage from '@/components/ProfilePage';
 import OrderTracking from '@/components/OrderTracking';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
+import InstallPrompt from '@/components/InstallPrompt';
+import InstallButton from '@/components/InstallButton';
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState('home');
@@ -220,6 +222,7 @@ const Index = () => {
             >
               Menu
             </Button>
+            <InstallButton />
             {isLoggedIn && (
               <>
                 <Button
@@ -462,6 +465,9 @@ const Index = () => {
         onUpdateQuantity={updateQuantity}
         total={getCartTotal()}
       />
+      
+      {/* Install Prompt */}
+      <InstallPrompt />
     </div>
   );
 };
