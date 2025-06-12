@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { validatePhoneNumber, formatPhoneNumber } from '@/utils/phoneValidation';
 
 interface LoginModalProps {
   open: boolean;
@@ -22,14 +22,25 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
     confirmPassword: '',
   });
   const [passwordError, setPasswordError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const { toast } = useToast();
   const { login, register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Clear previous password error
+    // Clear previous errors
     setPasswordError('');
+    setPhoneError('');
+    
+    // Validate phone number for signup
+    if (!isLogin) {
+      const phoneValidation = validatePhoneNumber(formData.phone);
+      if (!phoneValidation.isValid) {
+        setPhoneError(phoneValidation.message);
+        return;
+      }
+    }
     
     // Check password confirmation for signup
     if (!isLogin && formData.password !== formData.confirmPassword) {
@@ -62,13 +73,29 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    const { name, value } = e.target;
+    
+    if (name === 'phone') {
+      // Format phone number as user types
+      const formattedPhone = formatPhoneNumber(value);
+      setFormData(prev => ({
+        ...prev,
+        [name]: formattedPhone
+      }));
+      
+      // Clear phone error when user types
+      if (phoneError) {
+        setPhoneError('');
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
     
     // Clear password error when user types
-    if (passwordError && (e.target.name === 'password' || e.target.name === 'confirmPassword')) {
+    if (passwordError && (name === 'password' || name === 'confirmPassword')) {
       setPasswordError('');
     }
   };
@@ -76,6 +103,7 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
   const handleModeSwitch = () => {
     setIsLogin(!isLogin);
     setPasswordError('');
+    setPhoneError('');
     setFormData({
       name: '',
       email: '',
@@ -143,11 +171,17 @@ const LoginModal = ({ open, onClose }: LoginModalProps) => {
                   id="phone"
                   name="phone"
                   type="tel"
-                  placeholder="Enter your phone number"
+                  placeholder="Enter your 10-digit phone number"
                   value={formData.phone}
                   onChange={handleInputChange}
                   required={!isLogin}
+                  className={phoneError ? 'border-red-500' : ''}
+                  maxLength={12} // XXX-XXX-XXXX format
                 />
+                {phoneError && (
+                  <p className="text-sm text-red-500 mt-1">{phoneError}</p>
+                )}
+                <p className="text-xs text-gray-500">Format: XXX-XXX-XXXX</p>
               </div>
             )}
 
