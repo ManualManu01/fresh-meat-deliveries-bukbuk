@@ -1,0 +1,687 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BukBuk - Fresh Meat Delivery</title>
+    <meta name="description" content="Fresh Chicken, Mutton & Kabab Delivered to Your Door">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        .hidden { display: none !important; }
+        .animate-fade-in { animation: fadeIn 1s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        .gradient-bg { background: linear-gradient(135deg, #fef2f2, #fef7ed, #fffbeb); }
+        .gradient-red { background: linear-gradient(45deg, #ef4444, #f97316); }
+        .gradient-green { background: linear-gradient(45deg, #10b981, #059669); }
+        .btn-hover:hover { transform: translateY(-2px); transition: all 0.3s; }
+        .card-hover:hover { transform: scale(1.05); transition: all 0.3s; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="utensils" class="text-2xl text-red-600"></i>
+                <h1 class="text-2xl font-bold text-red-600">BukBuk</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="homeBtn" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">Home</button>
+                <button id="menuBtn" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">Menu</button>
+                <button id="loginBtn" class="px-4 py-2 gradient-red text-white rounded hover:opacity-90 transition-opacity">Login</button>
+                <button id="cartBtn" class="px-4 py-2 gradient-red text-white rounded hover:opacity-90 transition-opacity relative hidden">
+                    Cart <span id="cartCount" class="bg-white text-red-600 rounded-full px-2 py-1 text-xs ml-1">0</span>
+                </button>
+                <button id="profileBtn" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors hidden">Profile</button>
+                <button id="logoutBtn" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors hidden">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="mainContent">
+        <!-- Home Page -->
+        <div id="homePage">
+            <!-- Hero Section -->
+            <section class="relative overflow-hidden py-20">
+                <div class="container mx-auto px-4 text-center">
+                    <div class="animate-fade-in">
+                        <h1 class="text-5xl md:text-7xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent mb-6">
+                            BukBuk
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-700 mb-8">
+                            Fresh Chicken, Mutton & Kabab Delivered to Your Door
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-4 mb-12">
+                            <span class="bg-green-100 text-green-800 px-4 py-2 text-lg rounded-full flex items-center">
+                                <i data-lucide="clock" class="mr-2 w-4 h-4"></i>
+                                30 Min Delivery
+                            </span>
+                            <span class="bg-blue-100 text-blue-800 px-4 py-2 text-lg rounded-full flex items-center">
+                                <i data-lucide="star" class="mr-2 w-4 h-4"></i>
+                                Premium Quality
+                            </span>
+                            <span class="bg-purple-100 text-purple-800 px-4 py-2 text-lg rounded-full flex items-center">
+                                <i data-lucide="truck" class="mr-2 w-4 h-4"></i>
+                                Free Delivery
+                            </span>
+                        </div>
+                        <button id="orderNowBtn" class="gradient-red text-white text-xl px-8 py-4 rounded-full shadow-2xl btn-hover">
+                            Order Now
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-16 bg-white/50">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Why Choose BukBuk?</h2>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm card-hover text-center">
+                            <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                <i data-lucide="star" class="text-2xl text-red-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4">Premium Quality</h3>
+                            <p class="text-gray-600">Fresh, halal-certified meat sourced from trusted suppliers with the highest quality standards.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm card-hover text-center">
+                            <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                                <i data-lucide="clock" class="text-2xl text-green-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4">Fast Delivery</h3>
+                            <p class="text-gray-600">Get your fresh meat delivered within 30 minutes to your doorstep with our express delivery service.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm card-hover text-center">
+                            <div class="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                <i data-lucide="truck" class="text-2xl text-blue-600"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-4">Free Delivery</h3>
+                            <p class="text-gray-600">Enjoy free delivery on all orders above ₹500. No hidden charges, just fresh meat at your door.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section class="py-16 gradient-red text-white">
+                <div class="container mx-auto px-4 text-center">
+                    <h2 class="text-3xl font-bold mb-8">Contact Us</h2>
+                    <div class="flex flex-wrap justify-center gap-8">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="phone" class="w-5 h-5"></i>
+                            <span>+91 9876543210</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                            <span>order@bukbuk.com</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                            <span>Delhi NCR</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Menu Page -->
+        <div id="menuPage" class="hidden">
+            <div class="container mx-auto px-4 py-8">
+                <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+                    Fresh Meat Menu
+                </h1>
+
+                <!-- Search -->
+                <div class="mb-8 flex justify-center">
+                    <div class="relative max-w-md w-full">
+                        <i data-lucide="search" class="absolute left-3 top-3 text-gray-400 w-5 h-5"></i>
+                        <input id="searchInput" type="text" placeholder="Search for meat..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="flex justify-center mb-8">
+                    <div class="bg-white/50 rounded-full p-1 flex space-x-1">
+                        <button class="category-btn active px-6 py-2 rounded-full transition-all duration-300" data-category="chicken">Chicken</button>
+                        <button class="category-btn px-6 py-2 rounded-full transition-all duration-300" data-category="mutton">Mutton</button>
+                        <button class="category-btn px-6 py-2 rounded-full transition-all duration-300" data-category="kabab">Kabab</button>
+                    </div>
+                </div>
+
+                <!-- Menu Items -->
+                <div id="menuItems" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="hidden">
+            <div class="container mx-auto px-4 py-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center mb-8">
+                        <button id="profileBackBtn" class="mr-4 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 flex items-center">
+                            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                            Back
+                        </button>
+                        <h1 class="text-3xl font-bold text-gray-800">My Profile</h1>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Profile Info -->
+                        <div class="bg-white rounded-lg shadow-sm">
+                            <div class="gradient-red text-white p-6 rounded-t-lg">
+                                <h2 class="text-xl font-bold flex items-center justify-between">
+                                    Profile Information
+                                    <button id="editProfileBtn" class="px-3 py-1 bg-white text-red-600 rounded text-sm flex items-center">
+                                        <i data-lucide="edit" class="w-4 h-4 mr-1"></i>
+                                        Edit
+                                    </button>
+                                </h2>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                        <input id="profileName" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" value="John Doe" disabled>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input id="profileEmail" type="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" value="john@example.com" disabled>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                        <input id="profilePhone" type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" value="+91 9876543210" disabled>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                        <input id="profileAddress" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" placeholder="Enter delivery address" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order History -->
+                        <div class="bg-white rounded-lg shadow-sm">
+                            <div class="p-6 border-b">
+                                <h2 class="text-xl font-bold flex items-center">
+                                    <i data-lucide="shopping-bag" class="w-5 h-5 mr-2"></i>
+                                    Order History
+                                </h2>
+                            </div>
+                            <div class="p-6">
+                                <div id="orderHistory" class="space-y-4">
+                                    <!-- Orders will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h2 class="text-2xl font-bold text-red-600 text-center mb-4">Welcome to BukBuk</h2>
+            <div class="text-center mb-6">
+                <h3 id="loginTitle" class="text-xl font-bold">Login</h3>
+                <p id="loginSubtitle" class="text-gray-600">Welcome back! Please login to continue.</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div id="nameField" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input id="loginName" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Enter your full name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input id="loginEmail" type="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Enter your email" required>
+                </div>
+                <div id="phoneField" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input id="loginPhone" type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Enter your phone number">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input id="loginPassword" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Enter your password" required>
+                </div>
+                <div id="confirmPasswordField" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                    <input id="loginConfirmPassword" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Confirm your password">
+                </div>
+                
+                <button type="submit" id="loginSubmitBtn" class="w-full gradient-red text-white py-2 rounded-lg hover:opacity-90 transition-opacity">
+                    Login
+                </button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <button id="toggleAuthMode" class="text-red-600 hover:text-red-700 underline">
+                    Don't have an account? Sign up
+                </button>
+            </div>
+            
+            <button id="closeLoginModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-96 overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-red-600">Shopping Cart</h2>
+                <button id="closeCartModal" class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div id="cartItems" class="space-y-4 mb-6">
+                <!-- Cart items will be populated here -->
+            </div>
+            
+            <div class="border-t pt-4">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-bold">Total: ₹<span id="cartTotal">0</span></span>
+                </div>
+                <button id="checkoutBtn" class="w-full gradient-green text-white py-2 rounded-lg hover:opacity-90 transition-opacity">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Application State
+        let currentUser = null;
+        let isLoggedIn = false;
+        let currentPage = 'home';
+        let isLoginMode = true;
+        let cart = [];
+        let currentCategory = 'chicken';
+
+        // Menu Data
+        const menuItems = {
+            chicken: [
+                { id: 1, name: 'Whole Chicken', price: 280, unit: 'kg', description: 'Fresh whole chicken, perfect for family meals', rating: 4.5, reviews: 120, image: 'https://images.unsplash.com/photo-1518492104633-130d0cc84637?w=400&h=300&fit=crop' },
+                { id: 2, name: 'Chicken Curry Cut', price: 320, unit: 'kg', description: 'Pre-cut chicken pieces for easy cooking', rating: 4.7, reviews: 95, image: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=300&fit=crop' },
+                { id: 3, name: 'Chicken Breast', price: 420, unit: 'kg', description: 'Boneless chicken breast, high protein', rating: 4.8, reviews: 87, image: 'https://images.unsplash.com/photo-1588347818131-c6c3d7b6b4aa?w=400&h=300&fit=crop' },
+                { id: 4, name: 'Chicken Wings', price: 380, unit: 'kg', description: 'Fresh chicken wings for BBQ and grilling', rating: 4.6, reviews: 65, image: 'https://images.unsplash.com/photo-1527477396-1741a5b93ca3?w=400&h=300&fit=crop' }
+            ],
+            mutton: [
+                { id: 5, name: 'Mutton Curry Cut', price: 680, unit: 'kg', description: 'Fresh mutton pieces with bone', rating: 4.4, reviews: 78, image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop' },
+                { id: 6, name: 'Mutton Boneless', price: 820, unit: 'kg', description: 'Premium boneless mutton pieces', rating: 4.6, reviews: 92, image: 'https://images.unsplash.com/photo-1588347818131-c6c3d7b6b4aa?w=400&h=300&fit=crop' },
+                { id: 7, name: 'Mutton Keema', price: 720, unit: 'kg', description: 'Fresh minced mutton', rating: 4.5, reviews: 56, image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop' },
+                { id: 8, name: 'Mutton Chops', price: 750, unit: 'kg', description: 'Tender mutton chops for special occasions', rating: 4.7, reviews: 43, image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop' }
+            ],
+            kabab: [
+                { id: 9, name: 'Seekh Kabab', price: 380, unit: 'kg', description: 'Spiced minced meat on skewers', rating: 4.6, reviews: 134, image: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400&h=300&fit=crop' },
+                { id: 10, name: 'Chicken Tikka', price: 450, unit: 'kg', description: 'Marinated chicken pieces', rating: 4.8, reviews: 156, image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop' },
+                { id: 11, name: 'Shami Kabab', price: 32, unit: 'piece', description: 'Traditional spiced patties', rating: 4.5, reviews: 89, image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&h=300&fit=crop' },
+                { id: 12, name: 'Galouti Kabab', price: 45, unit: 'piece', description: 'Melt-in-mouth Lucknowi specialty', rating: 4.9, reviews: 67, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop' }
+            ]
+        };
+
+        // DOM Elements
+        const homeBtn = document.getElementById('homeBtn');
+        const menuBtn = document.getElementById('menuBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const cartBtn = document.getElementById('cartBtn');
+        const profileBtn = document.getElementById('profileBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const orderNowBtn = document.getElementById('orderNowBtn');
+        
+        const homePage = document.getElementById('homePage');
+        const menuPage = document.getElementById('menuPage');
+        const profilePage = document.getElementById('profilePage');
+        
+        const loginModal = document.getElementById('loginModal');
+        const cartModal = document.getElementById('cartModal');
+        const toast = document.getElementById('toast');
+
+        // Utility Functions
+        function showToast(message, type = 'success') {
+            const toastElement = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toastElement.className = `fixed top-20 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300 z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white`;
+            
+            toastElement.style.transform = 'translateX(0)';
+            
+            setTimeout(() => {
+                toastElement.style.transform = 'translateX(100%)';
+            }, 3000);
+        }
+
+        function switchPage(page) {
+            currentPage = page;
+            
+            // Hide all pages
+            homePage.classList.add('hidden');
+            menuPage.classList.add('hidden');
+            profilePage.classList.add('hidden');
+            
+            // Show current page
+            document.getElementById(page + 'Page').classList.remove('hidden');
+            
+            // Update navigation buttons
+            homeBtn.className = page === 'home' ? 'px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors' : 'px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors';
+            menuBtn.className = page === 'menu' ? 'px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors' : 'px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors';
+        }
+
+        function updateAuthUI() {
+            if (isLoggedIn) {
+                loginBtn.classList.add('hidden');
+                cartBtn.classList.remove('hidden');
+                profileBtn.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+            } else {
+                loginBtn.classList.remove('hidden');
+                cartBtn.classList.add('hidden');
+                profileBtn.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+            }
+        }
+
+        function renderStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<i data-lucide="star" class="w-4 h-4 ${i <= Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}"></i>`;
+            }
+            return stars;
+        }
+
+        function renderMenuItems() {
+            const container = document.getElementById('menuItems');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            
+            const items = menuItems[currentCategory].filter(item => 
+                item.name.toLowerCase().includes(searchQuery)
+            );
+            
+            container.innerHTML = items.map(item => `
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${item.name}</h3>
+                        <p class="text-gray-600 mb-4">${item.description}</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-1">
+                                ${renderStars(item.rating)}
+                                <span class="text-sm text-gray-600 ml-1">${item.rating}</span>
+                            </div>
+                            <span class="text-sm text-gray-500">(${item.reviews} reviews)</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-red-600">₹${item.price}/${item.unit}</span>
+                            <button onclick="addToCart(${item.id})" class="gradient-red text-white px-4 py-2 rounded hover:opacity-90 transition-opacity">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function addToCart(itemId) {
+            if (!isLoggedIn) {
+                showToast('Please login to add items to cart', 'error');
+                loginModal.classList.remove('hidden');
+                return;
+            }
+            
+            const allItems = [...menuItems.chicken, ...menuItems.mutton, ...menuItems.kabab];
+            const item = allItems.find(i => i.id === itemId);
+            
+            const existingItem = cart.find(i => i.id === itemId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+            
+            updateCartUI();
+            showToast(`${item.name} added to cart`);
+        }
+
+        function updateCartUI() {
+            const cartCount = document.getElementById('cartCount');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            const totalElement = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500">Your cart is empty</p>';
+                totalElement.textContent = '0';
+                return;
+            }
+            
+            container.innerHTML = cart.map(item => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div class="flex-1">
+                        <h4 class="font-medium">${item.name}</h4>
+                        <p class="text-sm text-gray-600">₹${item.price} per ${item.unit}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="updateCartQuantity(${item.id}, -1)" class="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100">
+                            <i data-lucide="minus" class="w-3 h-3"></i>
+                        </button>
+                        <span class="w-8 text-center font-medium">${item.quantity}</span>
+                        <button onclick="updateCartQuantity(${item.id}, 1)" class="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-100">
+                            <i data-lucide="plus" class="w-3 h-3"></i>
+                        </button>
+                        <div class="ml-4 flex items-center space-x-2">
+                            <span class="font-bold">₹${item.price * item.quantity}</span>
+                            <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            totalElement.textContent = total;
+            
+            lucide.createIcons();
+        }
+
+        function updateCartQuantity(itemId, change) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(itemId);
+                } else {
+                    updateCartUI();
+                    renderCart();
+                }
+            }
+        }
+
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            updateCartUI();
+            renderCart();
+        }
+
+        // Event Listeners
+        homeBtn.addEventListener('click', () => switchPage('home'));
+        menuBtn.addEventListener('click', () => switchPage('menu'));
+        profileBtn.addEventListener('click', () => switchPage('profile'));
+
+        orderNowBtn.addEventListener('click', () => {
+            if (isLoggedIn) {
+                switchPage('menu');
+            } else {
+                loginModal.classList.remove('hidden');
+            }
+        });
+
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+        });
+
+        cartBtn.addEventListener('click', () => {
+            renderCart();
+            cartModal.classList.remove('hidden');
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            isLoggedIn = false;
+            currentUser = null;
+            cart = [];
+            updateAuthUI();
+            updateCartUI();
+            switchPage('home');
+            showToast('Logged out successfully');
+        });
+
+        document.getElementById('closeLoginModal').addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+        });
+
+        document.getElementById('closeCartModal').addEventListener('click', () => {
+            cartModal.classList.add('hidden');
+        });
+
+        document.getElementById('profileBackBtn').addEventListener('click', () => {
+            switchPage('home');
+        });
+
+        document.getElementById('toggleAuthMode').addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            const nameField = document.getElementById('nameField');
+            const phoneField = document.getElementById('phoneField');
+            const confirmPasswordField = document.getElementById('confirmPasswordField');
+            const loginTitle = document.getElementById('loginTitle');
+            const loginSubtitle = document.getElementById('loginSubtitle');
+            const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+            const toggleAuthMode = document.getElementById('toggleAuthMode');
+            
+            if (isLoginMode) {
+                nameField.classList.add('hidden');
+                phoneField.classList.add('hidden');
+                confirmPasswordField.classList.add('hidden');
+                loginTitle.textContent = 'Login';
+                loginSubtitle.textContent = 'Welcome back! Please login to continue.';
+                loginSubmitBtn.textContent = 'Login';
+                toggleAuthMode.textContent = "Don't have an account? Sign up";
+            } else {
+                nameField.classList.remove('hidden');
+                phoneField.classList.remove('hidden');
+                confirmPasswordField.classList.remove('hidden');
+                loginTitle.textContent = 'Create Account';
+                loginSubtitle.textContent = 'Join us for fresh meat delivery!';
+                loginSubmitBtn.textContent = 'Create Account';
+                toggleAuthMode.textContent = 'Already have an account? Login';
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const name = document.getElementById('loginName').value;
+            const phone = document.getElementById('loginPhone').value;
+            
+            if (!isLoginMode) {
+                const confirmPassword = document.getElementById('loginConfirmPassword').value;
+                if (password !== confirmPassword) {
+                    showToast('Passwords do not match', 'error');
+                    return;
+                }
+            }
+            
+            // Simulate authentication
+            currentUser = {
+                name: name || 'John Doe',
+                email: email,
+                phone: phone || '+91 9876543210',
+                address: ''
+            };
+            
+            isLoggedIn = true;
+            updateAuthUI();
+            loginModal.classList.add('hidden');
+            
+            if (isLoginMode) {
+                showToast('Welcome back!');
+            } else {
+                showToast('Account created successfully!');
+            }
+            
+            // Reset form
+            document.getElementById('loginForm').reset();
+        });
+
+        document.getElementById('searchInput').addEventListener('input', renderMenuItems);
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-red-500', 'text-white');
+                    b.classList.add('text-red-600', 'hover:bg-red-50');
+                });
+                
+                btn.classList.add('active', 'bg-red-500', 'text-white');
+                btn.classList.remove('text-red-600', 'hover:bg-red-50');
+                
+                currentCategory = btn.dataset.category;
+                renderMenuItems();
+            });
+        });
+
+        document.getElementById('checkoutBtn').addEventListener('click', () => {
+            if (cart.length === 0) {
+                showToast('Cart is empty', 'error');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            showToast(`Order placed successfully! Total: ₹${total}`);
+            cart = [];
+            updateCartUI();
+            cartModal.classList.add('hidden');
+        });
+
+        // Initialize app
+        renderMenuItems();
+        updateAuthUI();
+        
+        // Set active category button style
+        document.querySelector('.category-btn[data-category="chicken"]').classList.add('bg-red-500', 'text-white');
+    </script>
+</body>
+</html>
