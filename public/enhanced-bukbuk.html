@@ -44,7 +44,13 @@
                     <div class="tagline" data-key="tagline">Fresh Meat Delivered to Your Door</div>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-outline" onclick="openLoginModal()">
+                    <div id="userGreeting" class="user-greeting hidden">
+                        <span class="greeting-text"></span>
+                        <button class="btn btn-outline" onclick="logout()">
+                            <span data-key="logout">Logout</span>
+                        </button>
+                    </div>
+                    <button class="btn btn-outline" id="loginBtn" onclick="openLoginModal()">
                         👤 <span data-key="login">Login</span>
                     </button>
                     <button class="btn btn-primary cart-btn" onclick="openCartModal()">
@@ -59,8 +65,42 @@
         </div>
     </header>
 
+    <!-- Welcome Section (for logged-in users) -->
+    <section class="welcome-section hidden" id="welcomeSection">
+        <div class="container">
+            <div class="welcome-card">
+                <div class="welcome-header">
+                    <h2 class="welcome-title" id="welcomeTitle">Welcome back! 👋</h2>
+                    <p class="welcome-subtitle" data-key="welcome-subtitle">Ready for fresh meat delivered to your door?</p>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="scrollToProducts()">
+                        <div class="quick-action-icon">🛒</div>
+                        <span data-key="quick-order">Quick Order</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="showLastOrder()">
+                        <div class="quick-action-icon">📋</div>
+                        <span data-key="last-order">Last Order</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="openProfileModal()">
+                        <div class="quick-action-icon">👤</div>
+                        <span data-key="profile">Profile</span>
+                    </button>
+                </div>
+
+                <div class="last-order-summary hidden" id="lastOrderSummary">
+                    <h3 data-key="recent-order">Your Recent Order</h3>
+                    <div class="order-items" id="lastOrderItems"></div>
+                    <div class="order-date" id="lastOrderDate"></div>
+                    <button class="btn btn-primary" onclick="reorderLast()" data-key="reorder">Reorder</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="heroSection">
         <div class="container">
             <h1 data-key="hero-title">Fresh Meat, Delivered Fast</h1>
             <p data-key="hero-subtitle">Premium quality chicken, mutton, and kebabs delivered to your doorstep in 30 minutes</p>
@@ -86,7 +126,7 @@
     </section>
 
     <!-- Products Section -->
-    <section class="products">
+    <section class="products" id="productsSection">
         <div class="container">
             <h2 class="section-title" data-key="products-title">Our Fresh Products</h2>
             <div class="product-grid" id="productGrid">
@@ -160,7 +200,42 @@
                         <label class="form-label" for="password" data-key="password">Password</label>
                         <input class="form-input" type="password" id="password" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" for="userName" data-key="full-name">Full Name</label>
+                        <input class="form-input" type="text" id="userName" required>
+                    </div>
                     <button class="btn btn-primary" type="submit" style="width: 100%;" data-key="login">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-key="profile-settings">Profile Settings</h2>
+                <button class="close-btn" onclick="closeProfileModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm" onsubmit="updateProfile(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="profileName" data-key="full-name">Full Name</label>
+                        <input class="form-input" type="text" id="profileName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profileEmail" data-key="email">Email</label>
+                        <input class="form-input" type="email" id="profileEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profilePhone" data-key="phone-number">Phone Number</label>
+                        <input class="form-input" type="tel" id="profilePhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profileAddress" data-key="delivery-address">Default Delivery Address</label>
+                        <textarea class="form-input" id="profileAddress" rows="3" required></textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit" style="width: 100%;" data-key="update-profile">Update Profile</button>
                 </form>
             </div>
         </div>
@@ -174,14 +249,20 @@
                 <button class="close-btn" onclick="closeCheckoutModal()">&times;</button>
             </div>
             <div class="modal-body">
+                <div class="cancellation-policy">
+                    <p data-key="cancellation-policy">⚠️ Orders can be cancelled within 20 minutes of placing. No exchanges or returns allowed after cancellation period expires.</p>
+                </div>
+                
                 <form id="checkoutForm" onsubmit="handleCheckout(event)">
                     <div class="form-group">
-                        <label class="form-label" for="address" data-key="delivery-address">Delivery Address</label>
-                        <input class="form-input" type="text" id="address" data-placeholder="enter-address" required>
+                        <label class="form-label" for="address" data-key="delivery-address">Delivery Address *</label>
+                        <textarea class="form-input required-field" id="address" data-placeholder="enter-address" required rows="3"></textarea>
+                        <div class="field-error hidden" id="addressError">Please enter your complete delivery address</div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="phone" data-key="phone-number">Phone Number</label>
-                        <input class="form-input" type="tel" id="phone" data-placeholder="enter-phone" required>
+                        <label class="form-label" for="phone" data-key="phone-number">Phone Number *</label>
+                        <input class="form-input required-field" type="tel" id="phone" data-placeholder="enter-phone" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
+                        <div class="field-error hidden" id="phoneError">Please enter a valid 10-digit phone number</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" data-key="payment-method">Payment Method</label>
@@ -210,6 +291,74 @@
                         Place Order
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div class="modal" id="orderConfirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-key="order-confirmed">Order Confirmed! 🎉</h2>
+                <button class="close-btn" onclick="closeOrderConfirmationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="order-success">
+                    <div class="order-id">
+                        <span data-key="order-id">Order ID:</span> <strong id="confirmationOrderId"></strong>
+                    </div>
+                    <div class="delivery-time">
+                        <span data-key="estimated-delivery">Estimated Delivery:</span> <strong>30 minutes</strong>
+                    </div>
+                </div>
+                
+                <div class="cancellation-section">
+                    <div class="cancel-timer">
+                        <span data-key="cancel-within">Cancel within:</span>
+                        <div class="timer" id="cancelTimer">20:00</div>
+                    </div>
+                    <button class="btn btn-outline cancel-order-btn" id="cancelOrderBtn" onclick="cancelOrder()" data-key="cancel-order">
+                        Cancel Order
+                    </button>
+                    <div class="timer-expired hidden" id="timerExpired">
+                        <p data-key="cancellation-expired">⏰ Cancellation period has expired - No exchanges or returns allowed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <div class="chatbot-toggle" id="chatbotToggle" onclick="toggleChatbot()">
+            <div class="chatbot-icon">🤖</div>
+            <div class="chatbot-name">Bakku</div>
+        </div>
+        
+        <div class="chatbot-window hidden" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-title">
+                    <div class="chatbot-avatar">🤖</div>
+                    <div>
+                        <div class="chatbot-name">Bakku - Your Assistant</div>
+                        <div class="chatbot-status">Online</div>
+                    </div>
+                </div>
+                <button class="chatbot-close" onclick="closeChatbot()">&times;</button>
+            </div>
+            
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <span data-key="chatbot-greeting">Hi! I'm Bakku, your BukBuk assistant. How can I help you today?</span>
+                    </div>
+                    <div class="message-time"></div>
+                </div>
+            </div>
+            
+            <div class="chatbot-input">
+                <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="handleChatKeyPress(event)">
+                <button onclick="sendMessage()" class="send-btn">📤</button>
             </div>
         </div>
     </div>
@@ -243,6 +392,12 @@
                     <input class="form-input" type="text" id="smtpHost" placeholder="SMTP Host">
                     <input class="form-input" type="text" id="smtpUsername" placeholder="SMTP Username" style="margin-top: 0.5rem;">
                     <input class="form-input" type="password" id="smtpPassword" placeholder="SMTP Password" style="margin-top: 0.5rem;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-key="sms-settings">SMS Settings (Twilio)</label>
+                    <input class="form-input" type="text" id="twilioSid" placeholder="Twilio Account SID" style="margin-top: 0.5rem;">
+                    <input class="form-input" type="password" id="twilioToken" placeholder="Twilio Auth Token" style="margin-top: 0.5rem;">
+                    <input class="form-input" type="tel" id="twilioPhone" placeholder="Twilio Phone Number" style="margin-top: 0.5rem;">
                 </div>
                 <button class="btn btn-primary" onclick="saveAdminSettings()" data-key="save-settings">Save Settings</button>
             </div>

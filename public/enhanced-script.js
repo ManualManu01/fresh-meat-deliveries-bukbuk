@@ -1,5 +1,4 @@
-
-// Enhanced BukBuk Script with new features and improvements
+// Enhanced BukBuk Script with comprehensive upgrades
 
 // Language support
 const translations = {
@@ -7,6 +6,7 @@ const translations = {
         'app-name': 'BukBuk',
         'tagline': 'Fresh Meat Delivered to Your Door',
         'login': 'Login',
+        'logout': 'Logout',
         'cart': 'Cart',
         'install-app': 'Install App',
         'hero-title': 'Fresh Meat, Delivered Fast',
@@ -28,8 +28,17 @@ const translations = {
         'total': 'Total:',
         'proceed-checkout': 'Proceed to Checkout',
         'welcome': 'Welcome to BukBuk',
+        'welcome-subtitle': 'Ready for fresh meat delivered to your door?',
+        'quick-order': 'Quick Order',
+        'last-order': 'Last Order',
+        'profile': 'Profile',
+        'recent-order': 'Your Recent Order',
+        'reorder': 'Reorder',
         'email': 'Email',
         'password': 'Password',
+        'full-name': 'Full Name',
+        'profile-settings': 'Profile Settings',
+        'update-profile': 'Update Profile',
         'complete-order': 'Complete Your Order',
         'delivery-address': 'Delivery Address',
         'phone-number': 'Phone Number',
@@ -38,21 +47,31 @@ const translations = {
         'upi-payment': 'UPI Payment',
         'cash-delivery': 'Cash on Delivery',
         'place-order': 'Place Order',
+        'order-confirmed': 'Order Confirmed!',
+        'order-id': 'Order ID:',
+        'estimated-delivery': 'Estimated Delivery:',
+        'cancel-within': 'Cancel within:',
+        'cancel-order': 'Cancel Order',
+        'cancellation-expired': 'Cancellation period has expired - No exchanges or returns allowed',
+        'cancellation-policy': 'Orders can be cancelled within 20 minutes of placing. No exchanges or returns allowed after cancellation period expires.',
         'install-title': 'Install BukBuk App',
         'install-desc': 'Get the full app experience!',
         'install': 'Install',
         'admin-settings': 'Admin Settings',
         'admin-email': 'Admin Email',
         'smtp-settings': 'SMTP Settings (Optional)',
+        'sms-settings': 'SMS Settings (Twilio)',
         'save-settings': 'Save Settings',
         'enter-address': 'Enter your complete address',
-        'enter-phone': 'Enter your phone number',
-        'add-to-cart': 'Add to Cart'
+        'enter-phone': 'Enter your phone number (10 digits)',
+        'add-to-cart': 'Add to Cart',
+        'chatbot-greeting': 'Hi! I\'m Bakku, your BukBuk assistant. How can I help you today?'
     },
     hi: {
         'app-name': 'बुकबुक',
         'tagline': 'ताज़ा मांस आपके दरवाज़े तक',
         'login': 'लॉगिन',
+        'logout': 'लॉगआउट',
         'cart': 'कार्ट',
         'install-app': 'ऐप इंस्टॉल करें',
         'hero-title': 'ताज़ा मांस, तेज़ डिलीवरी',
@@ -74,8 +93,17 @@ const translations = {
         'total': 'कुल:',
         'proceed-checkout': 'चेकआउट पर जाएं',
         'welcome': 'बुकबुक में आपका स्वागत है',
+        'welcome-subtitle': 'आपके दरवाज़े पर ताज़ा मांस के लिए तैयार हैं?',
+        'quick-order': 'त्वरित ऑर्डर',
+        'last-order': 'पिछला ऑर्डर',
+        'profile': 'प्रोफ़ाइल',
+        'recent-order': 'आपका हाल का ऑर्डर',
+        'reorder': 'दोबारा ऑर्डर करें',
         'email': 'ईमेल',
         'password': 'पासवर्ड',
+        'full-name': 'पूरा नाम',
+        'profile-settings': 'प्रोफ़ाइल सेटिंग्स',
+        'update-profile': 'प्रोफ़ाइल अपडेट करें',
         'complete-order': 'अपना ऑर्डर पूरा करें',
         'delivery-address': 'डिलीवरी पता',
         'phone-number': 'फोन नंबर',
@@ -84,16 +112,25 @@ const translations = {
         'upi-payment': 'UPI भुगतान',
         'cash-delivery': 'डिलीवरी पर नकद',
         'place-order': 'ऑर्डर दें',
+        'order-confirmed': 'ऑर्डर कन्फर्म!',
+        'order-id': 'ऑर्डर ID:',
+        'estimated-delivery': 'अनुमानित डिलीवरी:',
+        'cancel-within': 'इसके अंदर रद्द करें:',
+        'cancel-order': 'ऑर्डर रद्द करें',
+        'cancellation-expired': 'रद्दीकरण की अवधि समाप्त हो गई - कोई एक्सचेंज या रिटर्न नहीं',
+        'cancellation-policy': 'ऑर्डर देने के 20 मिनट के अंदर रद्द किया जा सकता है। रद्दीकरण की अवधि समाप्त होने के बाद कोई एक्सचेंज या रिटर्न नहीं।',
         'install-title': 'बुकबुक ऐप इंस्टॉल करें',
         'install-desc': 'पूरा ऐप अनुभव पाएं!',
         'install': 'इंस्टॉल करें',
         'admin-settings': 'एडमिन सेटिंग्स',
         'admin-email': 'एडमिन ईमेल',
         'smtp-settings': 'SMTP सेटिंग्स (वैकल्पिक)',
+        'sms-settings': 'SMS सेटिंग्स (Twilio)',
         'save-settings': 'सेटिंग्स सेव करें',
         'enter-address': 'अपना पूरा पता दर्ज करें',
-        'enter-phone': 'अपना फोन नंबर दर्ज करें',
-        'add-to-cart': 'कार्ट में जोड़ें'
+        'enter-phone': 'अपना फोन नंबर दर्ज करें (10 अंक)',
+        'add-to-cart': 'कार्ट में जोड़ें',
+        'chatbot-greeting': 'नमस्ते! मैं बक्कू हूं, आपका बुकबुक असिस्टेंट। आज मैं आपकी कैसे मदद कर सकता हूं?'
     }
 };
 
@@ -181,21 +218,61 @@ const coupons = {
     'FESTIVE20': { discount: 20, type: 'percentage', minOrder: 1000 }
 };
 
+// Chatbot responses
+const chatbotResponses = {
+    greetings: [
+        'Hello! How can I help you with your order today?',
+        'Hi there! What would you like to know about our fresh meat?',
+        'Welcome! I\'m here to assist you with anything you need.'
+    ],
+    orderHelp: [
+        'I can help you place orders, track existing ones, or answer questions about our products.',
+        'You can add items to cart by browsing our products section. Need help with anything specific?',
+        'Our delivery takes about 30 minutes. Would you like to place an order?'
+    ],
+    products: [
+        'We offer fresh chicken, mutton, and special cuts. All our meat is halal-certified and premium quality.',
+        'Our most popular items are Chicken Curry Cut and Mutton Boneless. What type of meat are you looking for?',
+        'We have various cuts available - curry cut, biryani cut, tandoori cut, and more!'
+    ],
+    delivery: [
+        'We deliver within 30 minutes of order confirmation.',
+        'Our delivery is available in select areas. You can add your address during checkout.',
+        'Delivery is free for orders above ₹500!'
+    ],
+    cancellation: [
+        'You can cancel your order within 20 minutes of placing it.',
+        'After 20 minutes, cancellation is not possible as we start preparing your order.',
+        'Please note our no exchange/return policy after the cancellation window.'
+    ],
+    fallback: [
+        'I\'m not sure about that. Let me connect you to our support team.',
+        'That\'s a great question! Our support team can help you better with that.',
+        'I don\'t have that information right now. Would you like to speak with customer support?'
+    ]
+};
+
 // App state
 let cart = [];
 let user = null;
 let deferredPrompt = null;
 let currentLanguage = 'en';
 let appliedCoupon = null;
+let currentOrder = null;
+let cancelTimer = null;
 let adminSettings = {
     email: 'admin@bukbuk.com',
     smtpHost: '',
     smtpUsername: '',
-    smtpPassword: ''
+    smtpPassword: '',
+    twilioSid: '',
+    twilioToken: '',
+    twilioPhone: ''
 };
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
+    loadUser();
     loadProducts();
     loadCart();
     loadLanguage();
@@ -203,7 +280,518 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPWA();
     setupAdminAccess();
     updatePlaceholders();
+    initializeChatbot();
 });
+
+// Enhanced User Management
+function loadUser() {
+    const savedUser = localStorage.getItem('bukbuk-user');
+    if (savedUser) {
+        user = JSON.parse(savedUser);
+        showUserGreeting();
+        showWelcomeSection();
+        loadLastOrder();
+    }
+}
+
+function showUserGreeting() {
+    if (user) {
+        const greeting = document.getElementById('userGreeting');
+        const greetingText = greeting.querySelector('.greeting-text');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        greetingText.textContent = `Welcome back, ${user.name}! 👋`;
+        greeting.classList.remove('hidden');
+        loginBtn.classList.add('hidden');
+    }
+}
+
+function showWelcomeSection() {
+    if (user) {
+        const welcomeSection = document.getElementById('welcomeSection');
+        const heroSection = document.getElementById('heroSection');
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        
+        welcomeTitle.textContent = `Welcome back, ${user.name}! 👋`;
+        welcomeSection.classList.remove('hidden');
+        heroSection.classList.add('hidden');
+    }
+}
+
+function loadLastOrder() {
+    const lastOrder = localStorage.getItem('bukbuk-last-order');
+    if (lastOrder && user) {
+        const orderData = JSON.parse(lastOrder);
+        const lastOrderSummary = document.getElementById('lastOrderSummary');
+        const lastOrderItems = document.getElementById('lastOrderItems');
+        const lastOrderDate = document.getElementById('lastOrderDate');
+        
+        lastOrderItems.innerHTML = orderData.items.map(item => 
+            `<div>${currentLanguage === 'hi' ? item.nameHi : item.name} x ${item.quantity}</div>`
+        ).join('');
+        
+        lastOrderDate.textContent = `Ordered on: ${new Date(orderData.date).toLocaleDateString()}`;
+        lastOrderSummary.classList.remove('hidden');
+    }
+}
+
+function scrollToProducts() {
+    document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function showLastOrder() {
+    const lastOrderSummary = document.getElementById('lastOrderSummary');
+    if (lastOrderSummary.classList.contains('hidden')) {
+        loadLastOrder();
+    } else {
+        lastOrderSummary.classList.add('hidden');
+    }
+}
+
+function reorderLast() {
+    const lastOrder = localStorage.getItem('bukbuk-last-order');
+    if (lastOrder) {
+        const orderData = JSON.parse(lastOrder);
+        cart = [...orderData.items];
+        updateCartUI();
+        saveCart();
+        showToast('Items added to cart from your last order!');
+        openCartModal();
+    }
+}
+
+function openProfileModal() {
+    if (user) {
+        document.getElementById('profileName').value = user.name || '';
+        document.getElementById('profileEmail').value = user.email || '';
+        document.getElementById('profilePhone').value = user.phone || '';
+        document.getElementById('profileAddress').value = user.address || '';
+        document.getElementById('profileModal').classList.add('active');
+    }
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').classList.remove('active');
+}
+
+function updateProfile(event) {
+    event.preventDefault();
+    
+    const updatedUser = {
+        ...user,
+        name: document.getElementById('profileName').value,
+        email: document.getElementById('profileEmail').value,
+        phone: document.getElementById('profilePhone').value,
+        address: document.getElementById('profileAddress').value
+    };
+    
+    user = updatedUser;
+    localStorage.setItem('bukbuk-user', JSON.stringify(user));
+    
+    showUserGreeting();
+    showWelcomeSection();
+    closeProfileModal();
+    showToast('Profile updated successfully!');
+}
+
+function logout() {
+    user = null;
+    localStorage.removeItem('bukbuk-user');
+    
+    const greeting = document.getElementById('userGreeting');
+    const loginBtn = document.getElementById('loginBtn');
+    const welcomeSection = document.getElementById('welcomeSection');
+    const heroSection = document.getElementById('heroSection');
+    
+    greeting.classList.add('hidden');
+    loginBtn.classList.remove('hidden');
+    welcomeSection.classList.add('hidden');
+    heroSection.classList.remove('hidden');
+    
+    showToast('Logged out successfully!');
+}
+
+// Enhanced form validation
+function validateForm() {
+    const address = document.getElementById('address').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const phonePattern = /^[0-9]{10}$/;
+    
+    let isValid = true;
+    
+    // Validate address
+    if (!address || address.length < 10) {
+        showFieldError('address', 'Please enter your complete delivery address (minimum 10 characters)');
+        isValid = false;
+    } else {
+        hideFieldError('address');
+    }
+    
+    // Validate phone
+    if (!phone || !phonePattern.test(phone)) {
+        showFieldError('phone', 'Please enter a valid 10-digit phone number');
+        isValid = false;
+    } else {
+        hideFieldError('phone');
+    }
+    
+    return isValid;
+}
+
+function showFieldError(fieldName, message) {
+    const field = document.getElementById(fieldName);
+    const errorElement = document.getElementById(fieldName + 'Error');
+    
+    field.classList.add('error');
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+}
+
+function hideFieldError(fieldName) {
+    const field = document.getElementById(fieldName);
+    const errorElement = document.getElementById(fieldName + 'Error');
+    
+    field.classList.remove('error');
+    errorElement.classList.add('hidden');
+}
+
+// Enhanced order processing with notifications
+async function handleCheckout(event) {
+    event.preventDefault();
+    
+    if (cart.length === 0) {
+        showToast(currentLanguage === 'hi' ? 'आपका कार्ट खाली है!' : 'Your cart is empty!', 'error');
+        return;
+    }
+    
+    if (!validateForm()) {
+        return;
+    }
+    
+    const address = document.getElementById('address').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+    
+    // Generate order ID
+    const orderId = 'BK' + Date.now().toString().slice(-6);
+    
+    // Calculate totals
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discount = calculateDiscount();
+    const total = subtotal - discount;
+    
+    // Create order data
+    const orderData = {
+        orderId,
+        items: cart,
+        address,
+        phone,
+        paymentMethod,
+        subtotal,
+        discount,
+        total,
+        coupon: appliedCoupon?.code || null,
+        customerName: user?.name || 'Guest Customer',
+        customerEmail: user?.email || '',
+        date: new Date().toISOString()
+    };
+    
+    // Save current order for cancellation
+    currentOrder = orderData;
+    localStorage.setItem('bukbuk-current-order', JSON.stringify(currentOrder));
+    
+    // Save as last order
+    localStorage.setItem('bukbuk-last-order', JSON.stringify(orderData));
+    
+    // Update user profile if logged in
+    if (user) {
+        user.phone = phone;
+        user.address = address;
+        localStorage.setItem('bukbuk-user', JSON.stringify(user));
+    }
+    
+    // Send notifications
+    await sendOrderNotifications(orderData);
+    
+    // Show order confirmation
+    showOrderConfirmation(orderData);
+    
+    // Clear cart and coupon
+    cart = [];
+    appliedCoupon = null;
+    updateCartUI();
+    saveCart();
+    closeCheckoutModal();
+}
+
+async function sendOrderNotifications(orderData) {
+    console.log('Sending order notifications...', orderData);
+    
+    try {
+        // Send email notification
+        await sendEmailNotification(orderData);
+        
+        // Send SMS notification (if Twilio is configured)
+        if (adminSettings.twilioSid && adminSettings.twilioToken) {
+            await sendSMSNotification(orderData);
+        }
+        
+        console.log('Notifications sent successfully');
+    } catch (error) {
+        console.error('Failed to send notifications:', error);
+    }
+}
+
+async function sendEmailNotification(orderData) {
+    try {
+        if (adminSettings.smtpHost && adminSettings.smtpUsername && adminSettings.smtpPassword) {
+            await Email.send({
+                Host: adminSettings.smtpHost,
+                Username: adminSettings.smtpUsername,
+                Password: adminSettings.smtpPassword,
+                To: adminSettings.email,
+                From: adminSettings.smtpUsername,
+                Subject: `New Order #${orderData.orderId} - BukBuk`,
+                Body: generateEmailBody(orderData)
+            });
+        } else {
+            // Fallback to SMTP.js demo (limited functionality)
+            await Email.send({
+                SecureToken: "your-secure-token", // You'll need to configure this
+                To: adminSettings.email,
+                From: "noreply@bukbuk.com",
+                Subject: `New Order #${orderData.orderId} - BukBuk`,
+                Body: generateEmailBody(orderData)
+            });
+        }
+        
+        console.log('Email notification sent successfully');
+    } catch (error) {
+        console.error('Email notification failed:', error);
+    }
+}
+
+async function sendSMSNotification(orderData) {
+    try {
+        // This would require a backend service for Twilio integration
+        // For now, we'll simulate SMS sending
+        const smsBody = generateSMSBody(orderData);
+        console.log('SMS would be sent:', smsBody);
+        
+        // In a real implementation, you would call your backend SMS service here
+        // const response = await fetch('/api/send-sms', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({
+        //         to: adminSettings.twilioPhone,
+        //         message: smsBody
+        //     })
+        // });
+    } catch (error) {
+        console.error('SMS notification failed:', error);
+    }
+}
+
+function generateEmailBody(orderData) {
+    const isHindi = currentLanguage === 'hi';
+    return `
+        <h2>New Order Received - BukBuk</h2>
+        <p><strong>Order ID:</strong> ${orderData.orderId}</p>
+        <p><strong>Customer:</strong> ${orderData.customerName}</p>
+        <p><strong>Email:</strong> ${orderData.customerEmail}</p>
+        <p><strong>Phone:</strong> ${orderData.phone}</p>
+        <p><strong>Address:</strong> ${orderData.address}</p>
+        <p><strong>Payment Method:</strong> ${orderData.paymentMethod}</p>
+        <p><strong>Total Amount:</strong> ₹${orderData.total}</p>
+        
+        <h3>Order Items:</h3>
+        <ul>
+            ${orderData.items.map(item => `
+                <li>${isHindi ? item.nameHi : item.name} x ${item.quantity} - ₹${item.price * item.quantity}</li>
+            `).join('')}
+        </ul>
+        
+        ${orderData.discount > 0 ? `<p><strong>Discount Applied:</strong> ₹${orderData.discount}</p>` : ''}
+        
+        <p><strong>Order Time:</strong> ${new Date().toLocaleString()}</p>
+        <p>Please prepare the order for delivery within 30 minutes.</p>
+    `;
+}
+
+function generateSMSBody(orderData) {
+    return `New BukBuk Order #${orderData.orderId}: ₹${orderData.total} - ${orderData.items.length} items to ${orderData.address}. Customer: ${orderData.customerName}, Phone: ${orderData.phone}`;
+}
+
+// Order confirmation and cancellation
+function showOrderConfirmation(orderData) {
+    document.getElementById('confirmationOrderId').textContent = orderData.orderId;
+    document.getElementById('orderConfirmationModal').classList.add('active');
+    startCancellationTimer();
+}
+
+function closeOrderConfirmationModal() {
+    document.getElementById('orderConfirmationModal').classList.remove('active');
+    if (cancelTimer) {
+        clearInterval(cancelTimer);
+        cancelTimer = null;
+    }
+}
+
+function startCancellationTimer() {
+    let timeLeft = 20 * 60; // 20 minutes in seconds
+    const timerElement = document.getElementById('cancelTimer');
+    const cancelBtn = document.getElementById('cancelOrderBtn');
+    const timerExpired = document.getElementById('timerExpired');
+    
+    cancelTimer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(cancelTimer);
+            cancelBtn.style.display = 'none';
+            timerExpired.classList.remove('hidden');
+            localStorage.removeItem('bukbuk-current-order');
+        }
+        
+        timeLeft--;
+    }, 1000);
+}
+
+function cancelOrder() {
+    if (currentOrder) {
+        localStorage.removeItem('bukbuk-current-order');
+        currentOrder = null;
+        
+        if (cancelTimer) {
+            clearInterval(cancelTimer);
+            cancelTimer = null;
+        }
+        
+        closeOrderConfirmationModal();
+        showToast(currentLanguage === 'hi' ? 'ऑर्डर रद्द कर दिया गया है!' : 'Order has been cancelled!');
+    }
+}
+
+// Chatbot functionality
+function initializeChatbot() {
+    const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const welcomeMessage = document.querySelector('.bot-message .message-time');
+    if (welcomeMessage) {
+        welcomeMessage.textContent = currentTime;
+    }
+}
+
+function toggleChatbot() {
+    const chatbotWindow = document.getElementById('chatbotWindow');
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    
+    if (chatbotWindow.classList.contains('hidden')) {
+        chatbotWindow.classList.remove('hidden');
+        chatbotToggle.style.display = 'none';
+        
+        // Greet user by name if logged in
+        if (user) {
+            const greeting = currentLanguage === 'hi' 
+                ? `नमस्ते ${user.name}! मैं आपकी कैसे मदद कर सकता हूं?`
+                : `Hello ${user.name}! How can I help you today?`;
+            addChatMessage(greeting, 'bot');
+        }
+    }
+}
+
+function closeChatbot() {
+    const chatbotWindow = document.getElementById('chatbotWindow');
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    
+    chatbotWindow.classList.add('hidden');
+    chatbotToggle.style.display = 'flex';
+}
+
+function handleChatKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+function sendMessage() {
+    const chatInput = document.getElementById('chatInput');
+    const message = chatInput.value.trim();
+    
+    if (!message) return;
+    
+    addChatMessage(message, 'user');
+    chatInput.value = '';
+    
+    // Process message and generate response
+    setTimeout(() => {
+        const response = generateChatbotResponse(message);
+        addChatMessage(response, 'bot');
+    }, 1000);
+}
+
+function addChatMessage(content, sender) {
+    const messagesContainer = document.getElementById('chatbotMessages');
+    const messageDiv = document.createElement('div');
+    const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    messageDiv.className = `message ${sender}-message`;
+    messageDiv.innerHTML = `
+        <div class="message-content">${content}</div>
+        <div class="message-time">${currentTime}</div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function generateChatbotResponse(userMessage) {
+    const message = userMessage.toLowerCase();
+    
+    // Intent detection
+    if (message.includes('hello') || message.includes('hi') || message.includes('hey') || 
+        message.includes('नमस्ते') || message.includes('हैलो')) {
+        return getRandomResponse(chatbotResponses.greetings);
+    }
+    
+    if (message.includes('order') || message.includes('buy') || message.includes('purchase') ||
+        message.includes('ऑर्डर') || message.includes('खरीद')) {
+        return getRandomResponse(chatbotResponses.orderHelp);
+    }
+    
+    if (message.includes('chicken') || message.includes('mutton') || message.includes('meat') ||
+        message.includes('चिकन') || message.includes('मटन') || message.includes('मांस')) {
+        return getRandomResponse(chatbotResponses.products);
+    }
+    
+    if (message.includes('delivery') || message.includes('time') || message.includes('fast') ||
+        message.includes('डिलीवरी') || message.includes('समय')) {
+        return getRandomResponse(chatbotResponses.delivery);
+    }
+    
+    if (message.includes('cancel') || message.includes('return') || message.includes('refund') ||
+        message.includes('रद्द') || message.includes('वापस')) {
+        return getRandomResponse(chatbotResponses.cancellation);
+    }
+    
+    if (message.includes('price') || message.includes('cost') || message.includes('₹') ||
+        message.includes('कीमत') || message.includes('दाम')) {
+        return 'Our prices are very competitive! Chicken starts from ₹320/kg and Mutton from ₹820/kg. Check our products section for detailed pricing.';
+    }
+    
+    if (message.includes('help') || message.includes('support') || message.includes('problem') ||
+        message.includes('मदद') || message.includes('सहायता')) {
+        return 'I\'m here to help! You can ask me about our products, delivery, orders, or anything else. What would you like to know?';
+    }
+    
+    // Fallback response
+    return getRandomResponse(chatbotResponses.fallback);
+}
+
+function getRandomResponse(responses) {
+    return responses[Math.floor(Math.random() * responses.length)];
+}
 
 // Language functions
 function switchLanguage(lang) {
@@ -263,7 +851,7 @@ function loadProducts() {
                 <div class="product-footer">
                     <div>
                         <span class="product-price">₹${product.price}</span>
-                        <span class="product-unit">${translations[currentLanguage]['total']} ${isHindi ? product.unitHi : product.unit}</span>
+                        <span class="product-unit">per ${isHindi ? product.unitHi : product.unit}</span>
                     </div>
                     <button class="btn btn-primary" onclick="addToCart(${product.id})">
                         ${translations[currentLanguage]['add-to-cart']}
@@ -398,15 +986,15 @@ function updateCartUI() {
     const finalTotal = subtotal - discount;
     
     cartCount.textContent = totalItems;
-    cartSubtotal.textContent = subtotal;
+    if (cartSubtotal) cartSubtotal.textContent = subtotal;
     cartTotal.textContent = finalTotal;
-    checkoutTotal.textContent = finalTotal;
+    if (checkoutTotal) checkoutTotal.textContent = finalTotal;
     
     // Show/hide discount row
-    if (discount > 0) {
+    if (discount > 0 && discountRow) {
         discountAmount.textContent = discount;
         discountRow.style.display = 'flex';
-    } else {
+    } else if (discountRow) {
         discountRow.style.display = 'none';
     }
     
@@ -418,14 +1006,15 @@ function updateCartUI() {
             </div>
         `;
         cartFooter.classList.add('hidden');
-        document.getElementById('couponSection').style.display = 'none';
+        const couponSection = document.getElementById('couponSection');
+        if (couponSection) couponSection.style.display = 'none';
     } else {
         const isHindi = currentLanguage === 'hi';
         cartItems.innerHTML = cart.map(item => `
             <div class="cart-item">
                 <div class="cart-item-info">
                     <div class="cart-item-name">${isHindi ? item.nameHi : item.name}</div>
-                    <div class="cart-item-price">₹${item.price} ${translations[currentLanguage]['total']} ${isHindi ? item.unitHi : item.unit}</div>
+                    <div class="cart-item-price">₹${item.price} per ${isHindi ? item.unitHi : item.unit}</div>
                 </div>
                 <div class="quantity-controls">
                     <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
@@ -436,7 +1025,8 @@ function updateCartUI() {
             </div>
         `).join('');
         cartFooter.classList.remove('hidden');
-        document.getElementById('couponSection').style.display = 'block';
+        const couponSection = document.getElementById('couponSection');
+        if (couponSection) couponSection.style.display = 'block';
     }
 }
 
@@ -457,11 +1047,15 @@ function loadCart() {
     if (savedCoupon && savedCoupon !== 'null') {
         appliedCoupon = JSON.parse(savedCoupon);
         if (appliedCoupon) {
-            document.getElementById('couponCode').value = appliedCoupon.code;
-            document.getElementById('couponCode').disabled = true;
-            document.querySelector('[data-key="apply-coupon"]').textContent = 'Applied';
-            document.querySelector('[data-key="apply-coupon"]').disabled = true;
-            showCouponMessage(`Coupon ${appliedCoupon.code} is active`, 'success');
+            const couponCodeInput = document.getElementById('couponCode');
+            const applyButton = document.querySelector('[data-key="apply-coupon"]');
+            if (couponCodeInput && applyButton) {
+                couponCodeInput.value = appliedCoupon.code;
+                couponCodeInput.disabled = true;
+                applyButton.textContent = 'Applied';
+                applyButton.disabled = true;
+                showCouponMessage(`Coupon ${appliedCoupon.code} is active`, 'success');
+            }
         }
     }
 }
@@ -484,6 +1078,10 @@ function closeLoginModal() {
 }
 
 function openCheckoutModal() {
+    if (user && user.phone && user.address) {
+        document.getElementById('address').value = user.address;
+        document.getElementById('phone').value = user.phone;
+    }
     closeCartModal();
     document.getElementById('checkoutModal').classList.add('active');
 }
@@ -518,10 +1116,21 @@ function loadAdminSettings() {
     const saved = localStorage.getItem('bukbuk-admin');
     if (saved) {
         adminSettings = JSON.parse(saved);
-        document.getElementById('adminEmail').value = adminSettings.email;
-        document.getElementById('smtpHost').value = adminSettings.smtpHost;
-        document.getElementById('smtpUsername').value = adminSettings.smtpUsername;
-        document.getElementById('smtpPassword').value = adminSettings.smtpPassword;
+        const adminEmail = document.getElementById('adminEmail');
+        const smtpHost = document.getElementById('smtpHost');
+        const smtpUsername = document.getElementById('smtpUsername');
+        const smtpPassword = document.getElementById('smtpPassword');
+        const twilioSid = document.getElementById('twilioSid');
+        const twilioToken = document.getElementById('twilioToken');
+        const twilioPhone = document.getElementById('twilioPhone');
+        
+        if (adminEmail) adminEmail.value = adminSettings.email;
+        if (smtpHost) smtpHost.value = adminSettings.smtpHost;
+        if (smtpUsername) smtpUsername.value = adminSettings.smtpUsername;
+        if (smtpPassword) smtpPassword.value = adminSettings.smtpPassword;
+        if (twilioSid) twilioSid.value = adminSettings.twilioSid;
+        if (twilioToken) twilioToken.value = adminSettings.twilioToken;
+        if (twilioPhone) twilioPhone.value = adminSettings.twilioPhone;
     }
 }
 
@@ -530,7 +1139,10 @@ function saveAdminSettings() {
         email: document.getElementById('adminEmail').value,
         smtpHost: document.getElementById('smtpHost').value,
         smtpUsername: document.getElementById('smtpUsername').value,
-        smtpPassword: document.getElementById('smtpPassword').value
+        smtpPassword: document.getElementById('smtpPassword').value,
+        twilioSid: document.getElementById('twilioSid').value,
+        twilioToken: document.getElementById('twilioToken').value,
+        twilioPhone: document.getElementById('twilioPhone').value
     };
     
     localStorage.setItem('bukbuk-admin', JSON.stringify(adminSettings));
@@ -538,133 +1150,28 @@ function saveAdminSettings() {
     closeAdminModal();
 }
 
-// Enhanced notification system
-async function sendOrderNotification(orderData) {
-    console.log('Sending order notification...', orderData);
-    
-    // Email notification using SMTP.js
-    try {
-        if (adminSettings.smtpHost && adminSettings.smtpUsername && adminSettings.smtpPassword) {
-            // Custom SMTP configuration
-            await Email.send({
-                Host: adminSettings.smtpHost,
-                Username: adminSettings.smtpUsername,
-                Password: adminSettings.smtpPassword,
-                To: adminSettings.email,
-                From: adminSettings.smtpUsername,
-                Subject: `New Order #${orderData.orderId} - BukBuk`,
-                Body: generateOrderEmailBody(orderData)
-            });
-        } else {
-            // Fallback to SMTP.js demo (limited functionality)
-            await Email.send({
-                SecureToken: "your-secure-token", // You'll need to configure this
-                To: adminSettings.email,
-                From: "noreply@bukbuk.com",
-                Subject: `New Order #${orderData.orderId} - BukBuk`,
-                Body: generateOrderEmailBody(orderData)
-            });
-        }
-        
-        console.log('Email notification sent successfully');
-    } catch (error) {
-        console.error('Failed to send email notification:', error);
-    }
-    
-    // SMS notification (placeholder - would need Twilio or similar service)
-    // For demo purposes, we'll log the SMS content
-    console.log('SMS notification would be sent:', generateOrderSMSBody(orderData));
-}
-
-function generateOrderEmailBody(orderData) {
-    const isHindi = currentLanguage === 'hi';
-    return `
-        <h2>New Order Received - BukBuk</h2>
-        <p><strong>Order ID:</strong> ${orderData.orderId}</p>
-        <p><strong>Customer:</strong> ${orderData.phone}</p>
-        <p><strong>Address:</strong> ${orderData.address}</p>
-        <p><strong>Payment Method:</strong> ${orderData.paymentMethod}</p>
-        <p><strong>Total Amount:</strong> ₹${orderData.total}</p>
-        
-        <h3>Order Items:</h3>
-        <ul>
-            ${orderData.items.map(item => `
-                <li>${isHindi ? item.nameHi : item.name} x ${item.quantity} - ₹${item.price * item.quantity}</li>
-            `).join('')}
-        </ul>
-        
-        ${orderData.discount > 0 ? `<p><strong>Discount Applied:</strong> ₹${orderData.discount}</p>` : ''}
-        
-        <p><strong>Order Time:</strong> ${new Date().toLocaleString()}</p>
-        <p>Please prepare the order for delivery within 30 minutes.</p>
-    `;
-}
-
-function generateOrderSMSBody(orderData) {
-    return `New BukBuk Order #${orderData.orderId}: ₹${orderData.total} - ${orderData.items.length} items to ${orderData.address}. Phone: ${orderData.phone}`;
-}
-
 // Form handlers
 function handleLogin(event) {
     event.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const name = document.getElementById('userName').value;
     
-    // Simulate login
-    user = { email, name: 'John Doe' };
-    showToast(currentLanguage === 'hi' ? 'वापसी पर स्वागत है! आप सफलतापूर्वक लॉग इन हो गए हैं।' : 'Welcome back! You have been successfully logged in.');
-    closeLoginModal();
-}
-
-async function handleCheckout(event) {
-    event.preventDefault();
-    
-    if (cart.length === 0) {
-        showToast(currentLanguage === 'hi' ? 'आपका कार्ट खाली है!' : 'Your cart is empty!', 'error');
-        return;
-    }
-    
-    const address = document.getElementById('address').value;
-    const phone = document.getElementById('phone').value;
-    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-    
-    // Generate order ID
-    const orderId = 'BK' + Date.now().toString().slice(-6);
-    
-    // Calculate totals
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = calculateDiscount();
-    const total = subtotal - discount;
-    
-    // Prepare order data
-    const orderData = {
-        orderId,
-        items: cart,
-        address,
-        phone,
-        paymentMethod,
-        subtotal,
-        discount,
-        total,
-        coupon: appliedCoupon?.code || null
+    // Create user object
+    user = { 
+        email, 
+        name,
+        phone: '',
+        address: '',
+        loginDate: new Date().toISOString()
     };
     
-    // Send notification to admin
-    await sendOrderNotification(orderData);
+    localStorage.setItem('bukbuk-user', JSON.stringify(user));
     
-    // Show success message
-    const successMessage = currentLanguage === 'hi' 
-        ? `ऑर्डर सफलतापूर्वक दिया गया! ऑर्डर #${orderId} - आपका ऑ!डर 30 मिनट में डिलीवर किया जाएगा!`
-        : `Order placed successfully! Order #${orderId} - Your order will be delivered in 30 minutes!`;
-    
-    showToast(successMessage);
-    
-    // Clear cart and coupon
-    cart = [];
-    appliedCoupon = null;
-    updateCartUI();
-    saveCart();
-    closeCheckoutModal();
+    showUserGreeting();
+    showWelcomeSection();
+    closeLoginModal();
+    showToast(currentLanguage === 'hi' ? `स्वागत है ${name}! आप सफलतापूर्वक लॉग इन हो गए हैं।` : `Welcome ${name}! You have been successfully logged in.`);
 }
 
 function selectPaymentMethod(method) {
@@ -686,7 +1193,7 @@ function selectPaymentMethod(method) {
 function setupPWA() {
     // Register service worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/enhanced-sw.js')
             .then(reg => {
                 console.log('SW registered', reg);
                 
@@ -807,11 +1314,16 @@ document.addEventListener('keydown', function(event) {
         document.querySelectorAll('.modal.active').forEach(modal => {
             modal.classList.remove('active');
         });
+        
+        // Close chatbot if open
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        if (!chatbotWindow.classList.contains('hidden')) {
+            closeChatbot();
+        }
     }
 });
 
 // Performance optimizations
-// Debounce function for search/filtering
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -857,5 +1369,14 @@ setInterval(() => {
         saveCart();
     }
 }, 30000); // Save every 30 seconds
+
+// Check for current order on page load
+window.addEventListener('load', () => {
+    const currentOrderData = localStorage.getItem('bukbuk-current-order');
+    if (currentOrderData) {
+        currentOrder = JSON.parse(currentOrderData);
+        showToast('You have an active order that can still be cancelled!');
+    }
+});
 
 console.log('BukBuk Enhanced Script loaded successfully!');

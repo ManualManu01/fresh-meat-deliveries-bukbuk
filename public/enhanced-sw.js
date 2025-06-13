@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'bukbuk-enhanced-v2';
+const CACHE_NAME = 'bukbuk-enhanced-v3';
 const urlsToCache = [
   '/',
   '/enhanced-bukbuk.html',
@@ -13,7 +13,7 @@ const urlsToCache = [
 
 // Install event
 self.addEventListener('install', function(event) {
-  console.log('Service Worker installing...');
+  console.log('Enhanced Service Worker installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
@@ -29,7 +29,7 @@ self.addEventListener('install', function(event) {
 
 // Activate event
 self.addEventListener('activate', function(event) {
-  console.log('Service Worker activating...');
+  console.log('Enhanced Service Worker activating...');
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
@@ -47,9 +47,10 @@ self.addEventListener('activate', function(event) {
 
 // Fetch event with enhanced caching strategy
 self.addEventListener('fetch', function(event) {
-  // Skip cross-origin requests
+  // Skip cross-origin requests except for allowed domains
   if (!event.request.url.startsWith(self.location.origin) && 
-      !event.request.url.startsWith('https://smtpjs.com')) {
+      !event.request.url.startsWith('https://smtpjs.com') &&
+      !event.request.url.startsWith('https://api.openai.com')) {
     return;
   }
 
@@ -114,17 +115,23 @@ self.addEventListener('sync', function(event) {
 });
 
 function doBackgroundSync() {
-  // Here you would sync offline data when connection is restored
+  // Sync offline orders when connection is restored
   console.log('Performing background sync...');
-  return Promise.resolve();
+  
+  // Check for pending orders in IndexedDB/localStorage
+  return new Promise((resolve) => {
+    // This would sync any offline orders or data
+    console.log('Background sync completed');
+    resolve();
+  });
 }
 
-// Push notifications (for future use)
+// Enhanced push notifications
 self.addEventListener('push', function(event) {
   console.log('Push message received');
   
-  const options = {
-    body: event.data ? event.data.text() : 'New update from BukBuk!',
+  let options = {
+    body: 'New update from BukBuk!',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [100, 50, 100],
@@ -146,12 +153,18 @@ self.addEventListener('push', function(event) {
     ]
   };
 
+  if (event.data) {
+    const data = event.data.json();
+    options.body = data.body || options.body;
+    options.data = { ...options.data, ...data };
+  }
+
   event.waitUntil(
-    self.registration.showNotification('BukBuk', options)
+    self.registration.showNotification('BukBuk - Fresh Meat Delivery', options)
   );
 });
 
-// Notification click handling
+// Enhanced notification click handling
 self.addEventListener('notificationclick', function(event) {
   console.log('Notification click received');
   
@@ -161,7 +174,37 @@ self.addEventListener('notificationclick', function(event) {
     event.waitUntil(
       clients.openWindow('/enhanced-bukbuk.html')
     );
+  } else if (event.action === 'close') {
+    // Just close the notification
+    return;
+  } else {
+    // Default action - open the app
+    event.waitUntil(
+      clients.openWindow('/enhanced-bukbuk.html')
+    );
   }
 });
 
-console.log('Enhanced Service Worker loaded');
+// Message handling for communication with the main thread
+self.addEventListener('message', function(event) {
+  console.log('SW received message:', event.data);
+  
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({ version: CACHE_NAME });
+  }
+});
+
+// Enhanced error handling
+self.addEventListener('error', function(event) {
+  console.error('Service Worker error:', event.error);
+});
+
+self.addEventListener('unhandledrejection', function(event) {
+  console.error('Service Worker unhandled rejection:', event.reason);
+});
+
+console.log('Enhanced Service Worker v3 loaded successfully');
