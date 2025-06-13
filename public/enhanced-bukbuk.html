@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BukBuk - Fresh Meat Delivery</title>
+    <meta name="description" content="Fresh Chicken, Mutton & Kabab Delivered to Your Door">
+    <meta name="theme-color" content="#dc2626">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+    
+    <!-- Meta tags for better PWA support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BukBuk">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="enhanced-styles.css">
+    
+    <!-- SMTP.js for email notifications -->
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button onclick="switchLanguage('en')" class="lang-btn active" id="lang-en">EN</button>
+        <button onclick="switchLanguage('hi')" class="lang-btn" id="lang-hi">हिं</button>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <div class="logo">🥩 <span data-key="app-name">BukBuk</span></div>
+                    <div class="tagline" data-key="tagline">Fresh Meat Delivered to Your Door</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="openLoginModal()">
+                        👤 <span data-key="login">Login</span>
+                    </button>
+                    <button class="btn btn-primary cart-btn" onclick="openCartModal()">
+                        🛒 <span data-key="cart">Cart</span>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <button class="btn btn-outline hidden" id="installBtn" onclick="installApp()">
+                        📱 <span data-key="install-app">Install App</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-key="hero-title">Fresh Meat, Delivered Fast</h1>
+            <p data-key="hero-subtitle">Premium quality chicken, mutton, and kebabs delivered to your doorstep in 30 minutes</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🚚</div>
+                    <h3 data-key="feature-delivery">30-Min Delivery</h3>
+                    <p data-key="feature-delivery-desc">Lightning-fast delivery to your doorstep</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🥩</div>
+                    <h3 data-key="feature-quality">Premium Quality</h3>
+                    <p data-key="feature-quality-desc">Fresh, halal-certified meat from trusted sources</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <h3 data-key="feature-price">Best Prices</h3>
+                    <p data-key="feature-price-desc">Competitive prices with regular offers</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products">
+        <div class="container">
+            <h2 class="section-title" data-key="products-title">Our Fresh Products</h2>
+            <div class="product-grid" id="productGrid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-key="cart-title">Shopping Cart</h2>
+                <button class="close-btn" onclick="closeCartModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Coupon Code Section -->
+                <div class="coupon-section" id="couponSection">
+                    <div class="form-group">
+                        <label class="form-label" data-key="coupon-label">Have a coupon code?</label>
+                        <div class="coupon-input-group">
+                            <input class="form-input" type="text" id="couponCode" placeholder="Enter coupon code">
+                            <button class="btn btn-outline" onclick="applyCoupon()" data-key="apply-coupon">Apply</button>
+                        </div>
+                    </div>
+                    <div id="couponMessage" class="coupon-message hidden"></div>
+                </div>
+                
+                <div id="cartItems">
+                    <div class="empty-cart">
+                        <p data-key="empty-cart">Your cart is empty</p>
+                        <button class="btn btn-outline" onclick="closeCartModal()" data-key="continue-shopping">Continue Shopping</button>
+                    </div>
+                </div>
+                <div id="cartFooter" class="hidden">
+                    <div class="cart-summary">
+                        <div class="cart-row">
+                            <span data-key="subtotal">Subtotal:</span>
+                            <span>₹<span id="cartSubtotal">0</span></span>
+                        </div>
+                        <div class="cart-row" id="discountRow" style="display: none;">
+                            <span data-key="discount">Discount:</span>
+                            <span class="discount-amount">-₹<span id="discountAmount">0</span></span>
+                        </div>
+                        <div class="cart-total">
+                            <span data-key="total">Total: ₹<span id="cartTotal">0</span></span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="openCheckoutModal()" data-key="proceed-checkout">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-key="welcome">Welcome to BukBuk</h2>
+                <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="email" data-key="email">Email</label>
+                        <input class="form-input" type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password" data-key="password">Password</label>
+                        <input class="form-input" type="password" id="password" required>
+                    </div>
+                    <button class="btn btn-primary" type="submit" style="width: 100%;" data-key="login">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-key="complete-order">Complete Your Order</h2>
+                <button class="close-btn" onclick="closeCheckoutModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="checkoutForm" onsubmit="handleCheckout(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="address" data-key="delivery-address">Delivery Address</label>
+                        <input class="form-input" type="text" id="address" data-placeholder="enter-address" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="phone" data-key="phone-number">Phone Number</label>
+                        <input class="form-input" type="tel" id="phone" data-placeholder="enter-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-key="payment-method">Payment Method</label>
+                        <div class="payment-methods">
+                            <div class="payment-method selected" onclick="selectPaymentMethod('card')">
+                                <input type="radio" name="payment" value="card" checked>
+                                <span class="payment-icon">💳</span>
+                                <span data-key="credit-card">Credit/Debit Card</span>
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('upi')">
+                                <input type="radio" name="payment" value="upi">
+                                <span class="payment-icon">📱</span>
+                                <span data-key="upi-payment">UPI Payment</span>
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('cod')">
+                                <input type="radio" name="payment" value="cod">
+                                <span class="payment-icon">💰</span>
+                                <span data-key="cash-delivery">Cash on Delivery</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cart-total">
+                        <span data-key="total">Total: ₹<span id="checkoutTotal">0</span></span>
+                    </div>
+                    <button class="btn btn-primary" type="submit" style="width: 100%; margin-top: 1rem;" data-key="place-order">
+                        Place Order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-info">
+            <div class="install-title" data-key="install-title">Install BukBuk App</div>
+            <div class="install-desc" data-key="install-desc">Get the full app experience!</div>
+        </div>
+        <div class="install-actions">
+            <button class="btn btn-outline" onclick="installApp()" data-key="install">Install</button>
+            <button class="btn btn-outline" onclick="dismissInstallPrompt()">&times;</button>
+        </div>
+    </div>
+
+    <!-- Admin Settings Modal (for email/SMS configuration) -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-key="admin-settings">Admin Settings</h2>
+                <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" data-key="admin-email">Admin Email</label>
+                    <input class="form-input" type="email" id="adminEmail" placeholder="admin@bukbuk.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-key="smtp-settings">SMTP Settings (Optional)</label>
+                    <input class="form-input" type="text" id="smtpHost" placeholder="SMTP Host">
+                    <input class="form-input" type="text" id="smtpUsername" placeholder="SMTP Username" style="margin-top: 0.5rem;">
+                    <input class="form-input" type="password" id="smtpPassword" placeholder="SMTP Password" style="margin-top: 0.5rem;">
+                </div>
+                <button class="btn btn-primary" onclick="saveAdminSettings()" data-key="save-settings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Access Button (hidden by default) -->
+    <button class="admin-access-btn hidden" onclick="openAdminModal()" title="Admin Settings">⚙️</button>
+
+    <!-- External JavaScript -->
+    <script src="enhanced-script.js"></script>
+</body>
+</html>
