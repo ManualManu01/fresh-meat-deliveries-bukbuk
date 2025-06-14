@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,6 +37,17 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
   
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Update form data when user changes
+  useState(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        address: user.address || prev.address,
+        phone: user.phone || prev.phone,
+      }));
+    }
+  }, [user]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
@@ -44,14 +55,12 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
       const formattedPhone = formatPhoneNumber(value);
       setFormData(prev => ({ ...prev, [name]: formattedPhone }));
       
-      // Clear error when user starts typing
       if (errors.phone) {
         setErrors(prev => ({ ...prev, phone: '' }));
       }
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
       
-      // Clear error when user starts typing
       if (errors[name as keyof typeof errors]) {
         setErrors(prev => ({ ...prev, [name]: '' }));
       }
@@ -94,7 +103,6 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
     setIsSubmitting(true);
     
     try {
-      // Filter items with quantity > 0
       const orderedItems = cart.filter(item => item.quantity > 0);
       
       if (orderedItems.length === 0) {
@@ -109,9 +117,8 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
       
       const orderId = 'BK' + Date.now().toString().slice(-6);
       const orderTime = new Date();
-      const estimatedDelivery = new Date(orderTime.getTime() + 30 * 60 * 1000); // 30 minutes from now
+      const estimatedDelivery = new Date(orderTime.getTime() + 30 * 60 * 1000);
       
-      // Convert cart items to order items format
       const orderItems = orderedItems.map(item => ({
         id: item.id,
         name: item.name,
@@ -138,21 +145,18 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
         }
       };
       
-      // Simulate order processing delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Add order to user orders
       addOrder(orderData);
-      
-      // Clear cart after successful order
       clearCart();
       
       onOrderComplete(orderData);
       onClose();
       
       toast({
-        title: "Order placed successfully!",
+        title: "🎉 Order placed successfully!",
         description: `Order #${orderData.orderId} will be delivered in 30 minutes.`,
+        className: "border-green-500 bg-green-50 text-green-800",
       });
       
     } catch (error) {
@@ -171,17 +175,20 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md animate-scale-in">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-red-600">
             Complete Your Order
           </DialogTitle>
+          <DialogDescription className="text-center text-gray-600">
+            Please fill in your delivery details to complete the order
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="address" className="flex items-center gap-2">
+              <Label htmlFor="address" className="flex items-center gap-2 font-medium">
                 <MapPin className="h-4 w-4" />
                 Delivery Address *
               </Label>
@@ -191,16 +198,16 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
                 value={formData.address}
                 onChange={handleInputChange}
                 placeholder="Enter your complete delivery address"
-                className={errors.address ? 'border-red-500' : ''}
+                className={`transition-all hover-scale ${errors.address ? 'border-red-500 focus:border-red-500' : 'focus:border-red-500'}`}
                 required
               />
               {errors.address && (
-                <p className="text-sm text-red-500">{errors.address}</p>
+                <p className="text-sm text-red-500 animate-fade-in">{errors.address}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone" className="flex items-center gap-2">
+              <Label htmlFor="phone" className="flex items-center gap-2 font-medium">
                 <Phone className="h-4 w-4" />
                 Phone Number *
               </Label>
@@ -211,12 +218,12 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="XXX-XXX-XXXX"
-                className={errors.phone ? 'border-red-500' : ''}
+                className={`transition-all hover-scale ${errors.phone ? 'border-red-500 focus:border-red-500' : 'focus:border-red-500'}`}
                 maxLength={12}
                 required
               />
               {errors.phone && (
-                <p className="text-sm text-red-500">{errors.phone}</p>
+                <p className="text-sm text-red-500 animate-fade-in">{errors.phone}</p>
               )}
               <p className="text-xs text-gray-500">Format: XXX-XXX-XXXX</p>
             </div>
@@ -227,21 +234,21 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
                 value={formData.paymentMethod}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}
               >
-                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 hover-scale transition-all">
                   <RadioGroupItem value="cod" id="cod" />
                   <Label htmlFor="cod" className="flex items-center gap-2 cursor-pointer">
                     <Banknote className="h-4 w-4" />
                     Cash on Delivery
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 hover-scale transition-all">
                   <RadioGroupItem value="upi" id="upi" />
                   <Label htmlFor="upi" className="flex items-center gap-2 cursor-pointer">
                     <Smartphone className="h-4 w-4" />
                     UPI Payment
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 hover-scale transition-all">
                   <RadioGroupItem value="card" id="card" />
                   <Label htmlFor="card" className="flex items-center gap-2 cursor-pointer">
                     <CreditCard className="h-4 w-4" />
@@ -252,7 +259,7 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-lg space-y-2 border">
             <h3 className="font-semibold">Order Summary</h3>
             {cart.filter(item => item.quantity > 0).map((item, index) => (
               <div key={index} className="flex justify-between text-sm">
@@ -269,10 +276,17 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
           <Button
             type="submit"
             disabled={isSubmitting || cart.length === 0}
-            className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 disabled:opacity-50 transition-all hover-scale"
             soundEffect="success"
           >
-            {isSubmitting ? 'Processing...' : `Place Order - ₹${total.toFixed(2)}`}
+            {isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Processing...
+              </div>
+            ) : (
+              `Place Order - ₹${total.toFixed(2)}`
+            )}
           </Button>
         </form>
       </DialogContent>

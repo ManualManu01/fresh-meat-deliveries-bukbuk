@@ -46,40 +46,59 @@ export const UserOrdersProvider = ({ children }: { children: ReactNode }) => {
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const { user } = useAuth();
 
-  // Load orders from localStorage on mount
+  // Load orders from localStorage on mount and when user changes
   useEffect(() => {
-    const savedOrders = localStorage.getItem('userOrders');
-    const savedCurrentOrder = localStorage.getItem('currentOrder');
+    const userKey = user?.email || 'guest';
+    const savedOrders = localStorage.getItem(`userOrders_${userKey}`);
+    const savedCurrentOrder = localStorage.getItem(`currentOrder_${userKey}`);
     
     if (savedOrders) {
-      const parsedOrders = JSON.parse(savedOrders).map((order: any) => ({
-        ...order,
-        orderTime: new Date(order.orderTime),
-        estimatedDelivery: new Date(order.estimatedDelivery)
-      }));
-      setOrders(parsedOrders);
+      try {
+        const parsedOrders = JSON.parse(savedOrders).map((order: any) => ({
+          ...order,
+          orderTime: new Date(order.orderTime),
+          estimatedDelivery: new Date(order.estimatedDelivery)
+        }));
+        setOrders(parsedOrders);
+      } catch (error) {
+        console.error('Error parsing saved orders:', error);
+        setOrders([]);
+      }
+    } else {
+      setOrders([]);
     }
     
     if (savedCurrentOrder) {
-      const parsedCurrentOrder = JSON.parse(savedCurrentOrder);
-      parsedCurrentOrder.orderTime = new Date(parsedCurrentOrder.orderTime);
-      parsedCurrentOrder.estimatedDelivery = new Date(parsedCurrentOrder.estimatedDelivery);
-      setCurrentOrder(parsedCurrentOrder);
+      try {
+        const parsedCurrentOrder = JSON.parse(savedCurrentOrder);
+        parsedCurrentOrder.orderTime = new Date(parsedCurrentOrder.orderTime);
+        parsedCurrentOrder.estimatedDelivery = new Date(parsedCurrentOrder.estimatedDelivery);
+        setCurrentOrder(parsedCurrentOrder);
+      } catch (error) {
+        console.error('Error parsing current order:', error);
+        setCurrentOrder(null);
+      }
+    } else {
+      setCurrentOrder(null);
     }
-  }, []);
+  }, [user]);
 
   // Save to localStorage whenever orders change
   useEffect(() => {
-    if (orders.length > 0) {
-      localStorage.setItem('userOrders', JSON.stringify(orders));
+    const userKey = user?.email || 'guest';
+    if (orders.length >= 0) {
+      localStorage.setItem(`userOrders_${userKey}`, JSON.stringify(orders));
     }
-  }, [orders]);
+  }, [orders, user]);
 
   useEffect(() => {
+    const userKey = user?.email || 'guest';
     if (currentOrder) {
-      localStorage.setItem('currentOrder', JSON.stringify(currentOrder));
+      localStorage.setItem(`currentOrder_${userKey}`, JSON.stringify(currentOrder));
+    } else {
+      localStorage.removeItem(`currentOrder_${userKey}`);
     }
-  }, [currentOrder]);
+  }, [currentOrder, user]);
 
   const addOrder = (orderData: Omit<Order, 'id'>) => {
     const newOrder: Order = {
@@ -91,6 +110,9 @@ export const UserOrdersProvider = ({ children }: { children: ReactNode }) => {
     setCurrentOrder(newOrder);
     
     console.log('Order added:', newOrder);
+    
+    // Send email notification (placeholder for actual implementation)
+    console.log('Email notification would be sent to ajdhh334@gmail.com for order:', newOrder.orderId);
   };
 
   const updateOrderStatus = (orderId: string, status: Order['status']) => {
@@ -101,9 +123,11 @@ export const UserOrdersProvider = ({ children }: { children: ReactNode }) => {
     );
     
     if (currentOrder && currentOrder.orderId === orderId) {
-      setCurrentOrder(prev => prev ? { ...prev, status } : null);
-      localStorage.setItem('currentOrder', JSON.stringify({ ...currentOrder, status }));
+      const updatedOrder = { ...currentOrder, status };
+      setCurrentOrder(updatedOrder);
     }
+    
+    console.log(`Order ${orderId} status updated to:`, status);
   };
 
   const getCurrentOrder = () => {
@@ -111,12 +135,11 @@ export const UserOrdersProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getOrderHistory = () => {
-    return orders.filter(order => order.id !== currentOrder?.id);
+    return orders.filter(order => order.status === 'delivered' || order.status === 'cancelled');
   };
 
   const clearCurrentOrder = () => {
     setCurrentOrder(null);
-    localStorage.removeItem('currentOrder');
   };
 
   return (
