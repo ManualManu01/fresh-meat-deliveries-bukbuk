@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserOrders } from '@/hooks/useUserOrders';
 import { validateAddress, validatePhoneNumber, formatPhoneNumber } from '@/utils/validationUtils';
 import { MapPin, Phone, CreditCard, Smartphone, Banknote } from 'lucide-react';
 
@@ -20,6 +21,7 @@ interface CheckoutModalProps {
 const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) => {
   const { cart, getCartTotal, clearCart } = useCart();
   const { user } = useAuth();
+  const { addOrder } = useUserOrders();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
@@ -105,20 +107,45 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
         return;
       }
       
+      const orderId = 'BK' + Date.now().toString().slice(-6);
+      const orderTime = new Date();
+      const estimatedDelivery = new Date(orderTime.getTime() + 30 * 60 * 1000); // 30 minutes from now
+      
+      // Convert cart items to order items format
+      const orderItems = orderedItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        unit: item.unit || 'kg',
+        quantity: item.quantity
+      }));
+      
       const orderData = {
-        orderId: 'BK' + Date.now().toString().slice(-6),
-        items: orderedItems,
+        orderId,
+        items: orderItems,
         total: getCartTotal(),
         address: formData.address,
         phone: formData.phone,
-        paymentMethod: formData.paymentMethod,
-        customerName: user?.name || 'Guest Customer',
-        customerEmail: user?.email || '',
-        timestamp: new Date().toISOString(),
+        orderTime,
+        estimatedDelivery,
+        status: 'confirmed' as const,
+        deliveryPartner: {
+          name: 'Rajesh Kumar',
+          phone: '+91 98765 43210',
+          rating: 4.8,
+          deliveries: 1250,
+          vehicleNumber: 'KA 01 AB 1234'
+        }
       };
       
       // Simulate order processing delay
       await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Add order to user orders
+      addOrder(orderData);
+      
+      // Clear cart after successful order
+      clearCart();
       
       onOrderComplete(orderData);
       onClose();
@@ -243,6 +270,7 @@ const CheckoutModal = ({ open, onClose, onOrderComplete }: CheckoutModalProps) =
             type="submit"
             disabled={isSubmitting || cart.length === 0}
             className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 disabled:opacity-50"
+            soundEffect="success"
           >
             {isSubmitting ? 'Processing...' : `Place Order - ₹${total.toFixed(2)}`}
           </Button>
