@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Utensils, Clock, Star, Truck, Phone, Mail, MapPin, Search, Filter, Zap, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,8 @@ import CartModal from '@/components/CartModal';
 import ProfilePage from '@/components/ProfilePage';
 import OrderTracking from '@/components/OrderTracking';
 import WelcomeBanner from '@/components/WelcomeBanner';
+import FeaturedProducts from '@/components/FeaturedProducts';
+import AIAssistant from '@/components/AIAssistant';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import InstallPrompt from '@/components/InstallPrompt';
@@ -348,6 +349,9 @@ const Index = () => {
             </div>
           </section>
 
+          {/* Featured Products Section */}
+          <FeaturedProducts />
+
           {/* Features Section */}
           <section className="py-16 relative">
             <div className="container mx-auto px-4">
@@ -503,6 +507,9 @@ const Index = () => {
           </div>
         </div>
       )}
+
+      {/* AI Assistant */}
+      <AIAssistant />
 
       {/* Modals */}
       <LoginModal open={showLoginModal} onClose={() => setShowLoginModal(false)} />
