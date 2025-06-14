@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,15 +27,36 @@ const ProductSearch = ({ onFilterChange, categories }: ProductSearchProps) => {
     sortOrder: 'asc'
   });
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Only call onFilterChange when localFilters actually change
+  // Debounced filter change with proper cleanup
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      onFilterChange(localFilters);
-    }, 300); // Debounce the filter changes
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
 
-    return () => clearTimeout(timeoutId);
-  }, [localFilters, onFilterChange]);
+    // Set new timeout
+    timeoutRef.current = setTimeout(() => {
+      onFilterChange(localFilters);
+    }, 300);
+
+    // Cleanup function
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [localFilters]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleFilterChange = (key: string, value: string) => {
     setLocalFilters(prev => ({

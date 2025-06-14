@@ -233,9 +233,9 @@ const Index = () => {
 
   const handleFilterChange = (newFilters) => {
     setIsLoading(true);
-    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
+    setFilters(newFilters);
     
-    // Simulate loading delay for better UX
+    // Clear loading after a shorter, fixed delay
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
@@ -509,7 +509,7 @@ const Index = () => {
           <div className="flex justify-center mb-8">
             <div className="bg-white/5 backdrop-blur-md rounded-full p-2 flex space-x-2 border border-purple-500/20">
               <Button
-                onClick={() => handleFilterChange({ selectedCategory: 'all' })}
+                onClick={() => handleFilterChange({ ...filters, selectedCategory: 'all' })}
                 variant={filters.selectedCategory === 'all' ? "default" : "ghost"}
                 className={`px-6 py-3 rounded-full transition-all duration-300 font-semibold ${
                   filters.selectedCategory === 'all'
@@ -522,7 +522,7 @@ const Index = () => {
               {Object.keys(menuItems).map((category) => (
                 <Button
                   key={category}
-                  onClick={() => handleFilterChange({ selectedCategory: category })}
+                  onClick={() => handleFilterChange({ ...filters, selectedCategory: category })}
                   variant={filters.selectedCategory === category ? "default" : "ghost"}
                   className={`px-6 py-3 rounded-full transition-all duration-300 font-semibold ${
                     filters.selectedCategory === category
