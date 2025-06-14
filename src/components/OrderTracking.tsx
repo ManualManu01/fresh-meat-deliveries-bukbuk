@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Clock, CheckCircle, Truck, MapPin, Phone, User, Calendar, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, Truck, MapPin, Phone, User, Calendar, AlertCircle, ShoppingBag } from 'lucide-react';
+import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 
 interface OrderTrackingProps {
   onBack: () => void;
@@ -13,19 +15,34 @@ const OrderTracking = ({ onBack }: OrderTrackingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState(25);
   const [cancelTimeLeft, setCancelTimeLeft] = useState(20 * 60); // 20 minutes in seconds
+  const { cart, getCartTotal, getCartItemsCount } = useCart();
+  const { user } = useAuth();
 
-  // Mock order data
+  // Generate order summary text
+  const getOrderSummary = () => {
+    const itemCount = getCartItemsCount();
+    if (itemCount === 0) return "No items in order yet";
+    
+    if (itemCount === 1) {
+      const item = cart[0];
+      return `You ordered 1 item – ${item.name} x ${item.quantity}`;
+    }
+    
+    const itemsList = cart.map(item => `${item.name} x ${item.quantity}`).join(', ');
+    return `You ordered ${itemCount} items – ${itemsList}`;
+  };
+
+  // Mock order data with dynamic cart information
   const orderData = {
     id: '12345',
-    items: [
-      { name: 'Chicken Curry Cut', quantity: 1, price: 320 },
-      { name: 'Mutton Boneless', quantity: 0.5, price: 410 },
-    ],
-    total: 730,
-    address: '123 Main Street, Block A, Sector 15, Noida, Delhi NCR - 201301',
-    phone: '+91 9876543210',
+    items: cart,
+    itemCount: getCartItemsCount(),
+    total: getCartTotal(),
+    address: user?.address || '123 Main Street, Block A, Sector 15, Noida, Delhi NCR - 201301',
+    phone: user?.phone || '+91 9876543210',
     orderTime: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
-    estimatedDelivery: new Date(Date.now() + 20 * 60 * 1000) // 20 minutes from now
+    estimatedDelivery: new Date(Date.now() + 20 * 60 * 1000), // 20 minutes from now
+    summary: getOrderSummary()
   };
 
   const trackingSteps = [
@@ -95,6 +112,51 @@ const OrderTracking = ({ onBack }: OrderTrackingProps) => {
 
   const canCancelOrder = cancelTimeLeft > 0 && currentStep < 2;
 
+  // If cart is empty, show different UI
+  if (orderData.itemCount === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute top-1/2 -right-4 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-1/3 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+        </div>
+
+        <div className="container mx-auto px-4 py-8 relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center mb-8">
+              <Button
+                variant="outline"
+                onClick={onBack}
+                className="mr-4 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400"
+              >
+                <ArrowLeft size={16} className="mr-2" />
+                Back
+              </Button>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                Track Your Order
+              </h1>
+            </div>
+
+            <Card className="bg-white/5 backdrop-blur-md border border-purple-500/20 shadow-2xl">
+              <CardContent className="p-12 text-center">
+                <ShoppingBag className="w-24 h-24 text-purple-400 mx-auto mb-6 opacity-50" />
+                <h2 className="text-2xl font-bold text-white mb-4">No Order to Track</h2>
+                <p className="text-gray-300 mb-6">You don't have any items in your cart yet. Add some fresh meat to your cart to start tracking your order!</p>
+                <Button
+                  onClick={onBack}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/25 transition-all duration-300 hover:scale-105"
+                >
+                  Start Shopping
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
       {/* Animated background particles */}
@@ -136,21 +198,40 @@ const OrderTracking = ({ onBack }: OrderTrackingProps) => {
                 <CardContent className="p-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <h3 className="font-semibold mb-3 text-white text-lg">Order Items</h3>
+                      <h3 className="font-semibold mb-3 text-white text-lg">Order Items ({orderData.itemCount})</h3>
                       <div className="space-y-3">
                         {orderData.items.map((item, index) => (
-                          <div key={index} className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-purple-500/20">
-                            <div>
-                              <span className="text-white font-medium">{item.name}</span>
-                              <p className="text-gray-400 text-sm">Quantity: {item.quantity} kg</p>
+                          <div key={index} className="flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-purple-500/20">
+                            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <span className="text-white font-bold text-sm">{item.name.charAt(0)}</span>
                             </div>
-                            <span className="text-yellow-400 font-bold">₹{item.price}</span>
+                            <div className="flex-1">
+                              <span className="text-white font-medium block">{item.name}</span>
+                              <p className="text-gray-400 text-sm">Quantity: {item.quantity} {item.unit}</p>
+                              <p className="text-gray-400 text-sm">Price per {item.unit}: ₹{item.price}</p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-yellow-400 font-bold text-lg">₹{(item.price * item.quantity).toFixed(2)}</span>
+                            </div>
                           </div>
                         ))}
-                        <div className="border-t border-purple-500/20 pt-3 flex justify-between items-center">
-                          <span className="font-bold text-white text-lg">Total:</span>
-                          <span className="font-bold text-2xl bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">₹{orderData.total}</span>
+                        <div className="border-t border-purple-500/20 pt-4">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-gray-300">Subtotal:</span>
+                            <span className="text-white">₹{orderData.total.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-gray-300">Delivery:</span>
+                            <span className="text-green-400">Free</span>
+                          </div>
+                          <div className="flex justify-between items-center border-t border-purple-500/20 pt-2">
+                            <span className="font-bold text-white text-xl">Total:</span>
+                            <span className="font-bold text-2xl bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">₹{orderData.total.toFixed(2)}</span>
+                          </div>
                         </div>
+                      </div>
+                      <div className="mt-4 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                        <p className="text-purple-300 text-sm font-medium">{orderData.summary}</p>
                       </div>
                     </div>
                     <div>
