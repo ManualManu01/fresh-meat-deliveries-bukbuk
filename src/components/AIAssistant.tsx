@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Sparkles, CheckCircle, Clock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { useToast } from '@/hooks/use-toast';
@@ -21,7 +21,11 @@ interface OrderData {
   items: any[];
 }
 
-const AIAssistant = () => {
+interface AIAssistantProps {
+  onNavigateToTracking?: () => void;
+}
+
+const AIAssistant = ({ onNavigateToTracking }: AIAssistantProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -33,10 +37,11 @@ const AIAssistant = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [orderData, setOrderData] = useState<OrderData>({ items: [] });
-  const [currentStep, setCurrentStep] = useState('greeting'); // greeting, phone, address, confirmation
+  const [currentStep, setCurrentStep] = useState('greeting'); // greeting, phone, address, confirmation, processing
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, isLoggedIn } = useAuth();
-  const { cart, addToCart } = useCart();
+  const { cart, addToCart, getCartItemsCount } = useCart();
   const { toast } = useToast();
 
   const scrollToBottom = () => {
@@ -62,8 +67,67 @@ const AIAssistant = () => {
     return phoneRegex.test(phone.replace(/\s/g, ''));
   };
 
+  const processOrderConfirmation = async () => {
+    setIsProcessingOrder(true);
+    setCurrentStep('processing');
+    
+    addMessage("🔄 Processing your order... Please wait while I confirm everything!", true);
+    
+    // Simulate order processing
+    setTimeout(() => {
+      addMessage("✅ Order Confirmed! 🎉", true);
+      
+      setTimeout(() => {
+        addMessage(`🚀 Great news! Your order has been successfully placed and confirmed!
+
+📋 Order Details:
+• Order ID: #${Math.random().toString(36).substr(2, 5).toUpperCase()}
+• Items: ${getCartItemsCount()} items from your cart
+• Phone: ${orderData.phone}
+• Address: ${orderData.address}
+• Total: ₹${cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}
+
+⏰ Estimated Delivery: 25-30 minutes
+🚚 Status: Order Confirmed → Preparing
+
+I'm now redirecting you to the order tracking page where you can monitor your order in real-time!`, true);
+
+        // Store order details for tracking
+        const orderDetails = {
+          orderId: Math.random().toString(36).substr(2, 5).toUpperCase(),
+          phone: orderData.phone,
+          address: orderData.address,
+          items: cart,
+          total: cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+          orderTime: new Date(),
+          status: 'confirmed'
+        };
+        
+        localStorage.setItem('currentOrder', JSON.stringify(orderDetails));
+        localStorage.setItem('tempOrderData', JSON.stringify({
+          phone: orderData.phone,
+          address: orderData.address
+        }));
+
+        toast({
+          title: "Order Confirmed! 🎉",
+          description: "Redirecting to order tracking...",
+        });
+
+        // Auto redirect to tracking after 3 seconds
+        setTimeout(() => {
+          if (onNavigateToTracking) {
+            onNavigateToTracking();
+          }
+          setIsOpen(false);
+          setIsProcessingOrder(false);
+        }, 3000);
+      }, 2000);
+    }, 3000);
+  };
+
   const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || isProcessingOrder) return;
 
     addMessage(inputValue, false);
     const userInput = inputValue.toLowerCase();
@@ -88,36 +152,25 @@ const AIAssistant = () => {
           
 📱 Phone: ${orderData.phone}
 📍 Address: ${inputValue}
-🛒 Items: Ready to add your selected items
+🛒 Items: ${getCartItemsCount()} items in your cart (₹${cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)})
 
-Would you like me to help you add items to your cart? Just say "yes" and I'll guide you to our menu!`, true);
+Everything looks perfect! Would you like me to confirm and place this order? Just say "yes" or "confirm order" and I'll process it immediately!`, true);
           setCurrentStep('confirmation');
         } else {
           addMessage("Please provide a complete delivery address with landmark details for accurate delivery.", true);
         }
       } else if (currentStep === 'confirmation') {
-        if (userInput.includes('yes') || userInput.includes('menu') || userInput.includes('order')) {
-          addMessage("🎉 Perfect! I'm redirecting you to our menu. You can add items to your cart and checkout with the details you provided!", true);
-          
-          // Store user details in localStorage for checkout
-          localStorage.setItem('tempOrderData', JSON.stringify({
-            phone: orderData.phone,
-            address: orderData.address
-          }));
-          
-          toast({
-            title: "Details Saved! 🎯",
-            description: "Your phone and address are saved for quick checkout!",
-          });
+        if (userInput.includes('yes') || userInput.includes('confirm') || userInput.includes('order') || userInput.includes('place')) {
+          processOrderConfirmation();
         } else {
-          addMessage("No problem! Feel free to ask me anything else or say 'menu' when you're ready to order! 😊", true);
+          addMessage("No problem! Feel free to ask me anything else or say 'confirm order' when you're ready to proceed! 😊", true);
         }
       }
     }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isProcessingOrder) {
       handleSendMessage();
     }
   };
@@ -142,11 +195,17 @@ Would you like me to help you add items to your cart? Just say "yes" and I'll gu
           <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <Bot className="w-6 h-6 text-white" />
+                {isProcessingOrder ? (
+                  <Clock className="w-6 h-6 text-white animate-spin" />
+                ) : (
+                  <Bot className="w-6 h-6 text-white" />
+                )}
               </div>
               <div>
                 <h3 className="font-bold text-white">AI Assistant</h3>
-                <p className="text-xs text-gray-200">Online • Ready to help</p>
+                <p className="text-xs text-gray-200">
+                  {isProcessingOrder ? 'Processing Order...' : 'Online • Ready to help'}
+                </p>
               </div>
             </div>
             <Button
@@ -154,6 +213,7 @@ Would you like me to help you add items to your cart? Just say "yes" and I'll gu
               size="sm"
               onClick={() => setIsOpen(false)}
               className="text-white hover:bg-white/10 rounded-full"
+              disabled={isProcessingOrder}
             >
               <X size={20} />
             </Button>
@@ -169,7 +229,11 @@ Would you like me to help you add items to your cart? Just say "yes" and I'll gu
                 >
                   {message.isBot && (
                     <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot size={16} className="text-white" />
+                      {isProcessingOrder && message.id === messages[messages.length - 1]?.id ? (
+                        <Clock size={16} className="text-white animate-spin" />
+                      ) : (
+                        <Bot size={16} className="text-white" />
+                      )}
                     </div>
                   )}
                   <div
@@ -202,15 +266,20 @@ Would you like me to help you add items to your cart? Just say "yes" and I'll gu
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your message..."
+                placeholder={isProcessingOrder ? "Processing order..." : "Type your message..."}
+                disabled={isProcessingOrder}
                 className="flex-1 bg-white/5 border border-purple-500/30 text-white placeholder-gray-400 focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/25 rounded-xl"
               />
               <Button
                 onClick={handleSendMessage}
-                disabled={!inputValue.trim()}
+                disabled={!inputValue.trim() || isProcessingOrder}
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl shadow-lg shadow-purple-500/25 transition-all duration-300 hover:scale-105 border-0"
               >
-                <Send size={16} />
+                {isProcessingOrder ? (
+                  <Clock size={16} className="animate-spin" />
+                ) : (
+                  <Send size={16} />
+                )}
               </Button>
             </div>
           </div>

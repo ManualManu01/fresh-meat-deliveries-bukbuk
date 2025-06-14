@@ -609,8 +609,8 @@ const Index = () => {
         </div>
       )}
 
-      {/* AI Assistant */}
-      <AIAssistant />
+      {/* AI Assistant with navigation callback */}
+      <AIAssistant onNavigateToTracking={() => setCurrentPage('tracking')} />
 
       {/* Modals */}
       <LoginModal open={showLoginModal} onClose={() => setShowLoginModal(false)} />
