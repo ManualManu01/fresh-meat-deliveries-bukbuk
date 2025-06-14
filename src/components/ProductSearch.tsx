@@ -4,7 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, Star, SortAsc, SortDesc, X } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ProductSearchProps {
   onFilterChange: (filters: any) => void;
@@ -12,150 +19,174 @@ interface ProductSearchProps {
 }
 
 const ProductSearch = ({ onFilterChange, categories }: ProductSearchProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [priceRange, setPriceRange] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [showFilters, setShowFilters] = useState(false);
+  const [localFilters, setLocalFilters] = useState({
+    searchQuery: '',
+    selectedCategory: 'all',
+    priceRange: 'all',
+    sortBy: 'name',
+    sortOrder: 'asc'
+  });
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const priceRanges = [
-    { label: 'All Prices', value: 'all' },
-    { label: 'Under ₹300', value: '0-300' },
-    { label: '₹300 - ₹500', value: '300-500' },
-    { label: '₹500 - ₹700', value: '500-700' },
-    { label: 'Above ₹700', value: '700+' }
-  ];
-
-  const sortOptions = [
-    { label: 'Name', value: 'name' },
-    { label: 'Price', value: 'price' },
-    { label: 'Rating', value: 'rating' },
-    { label: 'Popularity', value: 'reviews' }
-  ];
-
+  // Only call onFilterChange when localFilters actually change
   useEffect(() => {
-    onFilterChange({
-      searchQuery,
-      selectedCategory,
-      priceRange,
-      sortBy,
-      sortOrder
-    });
-  }, [searchQuery, selectedCategory, priceRange, sortBy, sortOrder, onFilterChange]);
+    const timeoutId = setTimeout(() => {
+      onFilterChange(localFilters);
+    }, 300); // Debounce the filter changes
 
-  const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory('all');
-    setPriceRange('all');
-    setSortBy('name');
-    setSortOrder('asc');
+    return () => clearTimeout(timeoutId);
+  }, [localFilters, onFilterChange]);
+
+  const handleFilterChange = (key: string, value: string) => {
+    setLocalFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const clearAllFilters = () => {
+    const clearedFilters = {
+      searchQuery: '',
+      selectedCategory: 'all',
+      priceRange: 'all',
+      sortBy: 'name',
+      sortOrder: 'asc'
+    };
+    setLocalFilters(clearedFilters);
   };
 
   return (
     <Card className="bg-white/5 backdrop-blur-md border border-purple-500/20 shadow-2xl mb-8">
       <CardContent className="p-6">
-        {/* Search Bar */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 text-purple-400" size={20} />
+        <div className="space-y-4">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <Input
-              placeholder="Search for fresh meat..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white/5 backdrop-blur-md border border-purple-500/30 text-white placeholder-gray-400 focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/25"
+              placeholder="Search for meat products..."
+              value={localFilters.searchQuery}
+              onChange={(e) => handleFilterChange('searchQuery', e.target.value)}
+              className="pl-10 bg-white/10 border-purple-500/30 text-white placeholder:text-gray-400 focus:border-purple-400"
             />
           </div>
-          <Button
-            variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400"
-          >
-            <Filter size={16} />
-            Filters
-          </Button>
-        </div>
 
-        {/* Advanced Filters */}
-        {showFilters && (
-          <div className="space-y-4 border-t border-purple-500/20 pt-6 animate-fade-in">
-            <div className="grid md:grid-cols-4 gap-4">
+          {/* Quick Filters */}
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant={showAdvancedFilters ? "default" : "outline"}
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className={showAdvancedFilters 
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 border-0' 
+                : 'border-purple-500/50 text-purple-300 hover:bg-purple-500/10'
+              }
+            >
+              <SlidersHorizontal size={16} className="mr-2" />
+              Advanced Filters
+            </Button>
+            
+            {/* Clear Filters Button */}
+            {(localFilters.searchQuery || localFilters.selectedCategory !== 'all' || localFilters.priceRange !== 'all') && (
+              <Button
+                variant="ghost"
+                onClick={clearAllFilters}
+                className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+              >
+                Clear All
+              </Button>
+            )}
+          </div>
+
+          {/* Advanced Filters */}
+          {showAdvancedFilters && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-white/5 rounded-lg border border-purple-500/20">
               {/* Category Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full bg-white/5 border border-purple-500/30 text-white rounded-md px-3 py-2 focus:border-purple-400 focus:outline-none"
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </option>
-                  ))}
-                </select>
+                <Select value={localFilters.selectedCategory} onValueChange={(value) => handleFilterChange('selectedCategory', value)}>
+                  <SelectTrigger className="bg-white/10 border-purple-500/30 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Price Range Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Price Range</label>
-                <select
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(e.target.value)}
-                  className="w-full bg-white/5 border border-purple-500/30 text-white rounded-md px-3 py-2 focus:border-purple-400 focus:outline-none"
-                >
-                  {priceRanges.map(range => (
-                    <option key={range.value} value={range.value}>
-                      {range.label}
-                    </option>
-                  ))}
-                </select>
+                <Select value={localFilters.priceRange} onValueChange={(value) => handleFilterChange('priceRange', value)}>
+                  <SelectTrigger className="bg-white/10 border-purple-500/30 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Prices</SelectItem>
+                    <SelectItem value="0-300">₹0 - ₹300</SelectItem>
+                    <SelectItem value="300-500">₹300 - ₹500</SelectItem>
+                    <SelectItem value="500-700">₹500 - ₹700</SelectItem>
+                    <SelectItem value="700+">₹700+</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Sort By */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Sort By</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full bg-white/5 border border-purple-500/30 text-white rounded-md px-3 py-2 focus:border-purple-400 focus:outline-none"
-                >
-                  {sortOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <Select value={localFilters.sortBy} onValueChange={(value) => handleFilterChange('sortBy', value)}>
+                  <SelectTrigger className="bg-white/10 border-purple-500/30 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="price">Price</SelectItem>
+                    <SelectItem value="rating">Rating</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Sort Order */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Order</label>
-                <Button
-                  variant="outline"
-                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                  className="w-full border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400"
-                >
-                  {sortOrder === 'asc' ? <SortAsc size={16} /> : <SortDesc size={16} />}
-                  <span className="ml-2">{sortOrder === 'asc' ? 'Ascending' : 'Descending'}</span>
-                </Button>
+                <Select value={localFilters.sortOrder} onValueChange={(value) => handleFilterChange('sortOrder', value)}>
+                  <SelectTrigger className="bg-white/10 border-purple-500/30 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">Ascending</SelectItem>
+                    <SelectItem value="desc">Descending</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
+          )}
 
-            {/* Clear Filters */}
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                onClick={clearFilters}
-                className="flex items-center gap-2 border-red-500/50 text-red-300 hover:bg-red-500/10 hover:border-red-400"
-              >
-                <X size={16} />
-                Clear Filters
-              </Button>
+          {/* Active Filters Display */}
+          {(localFilters.searchQuery || localFilters.selectedCategory !== 'all' || localFilters.priceRange !== 'all') && (
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-gray-400">Active filters:</span>
+              {localFilters.searchQuery && (
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
+                  Search: {localFilters.searchQuery}
+                </Badge>
+              )}
+              {localFilters.selectedCategory !== 'all' && (
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
+                  Category: {localFilters.selectedCategory}
+                </Badge>
+              )}
+              {localFilters.priceRange !== 'all' && (
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
+                  Price: ₹{localFilters.priceRange}
+                </Badge>
+              )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </CardContent>
     </Card>
   );
