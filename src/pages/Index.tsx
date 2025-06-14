@@ -12,6 +12,10 @@ import OrderTracking from '@/components/OrderTracking';
 import WelcomeBanner from '@/components/WelcomeBanner';
 import FeaturedProducts from '@/components/FeaturedProducts';
 import AIAssistant from '@/components/AIAssistant';
+import ProductSearch from '@/components/ProductSearch';
+import LoyaltyRewards from '@/components/LoyaltyRewards';
+import QuickReorder from '@/components/QuickReorder';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import InstallPrompt from '@/components/InstallPrompt';
@@ -24,6 +28,14 @@ const Index = () => {
   const [currentCategory, setCurrentCategory] = useState('chicken');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    searchQuery: '',
+    selectedCategory: 'all',
+    priceRange: 'all',
+    sortBy: 'name',
+    sortOrder: 'asc'
+  });
   const { toast } = useToast();
   const { cart, addToCart, removeFromCart, updateQuantity, getCartTotal, getCartItemsCount } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
@@ -157,9 +169,50 @@ const Index = () => {
     ],
   };
 
-  const filteredItems = menuItems[currentCategory]?.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const getFilteredItems = () => {
+    let items = filters.selectedCategory === 'all' 
+      ? Object.values(menuItems).flat() 
+      : menuItems[filters.selectedCategory] || [];
+
+    // Search filter
+    if (filters.searchQuery) {
+      items = items.filter(item =>
+        item.name.toLowerCase().includes(filters.searchQuery.toLowerCase())
+      );
+    }
+
+    // Price range filter
+    if (filters.priceRange !== 'all') {
+      const [min, max] = filters.priceRange.split('-').map(p => 
+        p === '+' ? Infinity : parseInt(p)
+      );
+      items = items.filter(item => {
+        if (max === undefined) return item.price >= min;
+        return item.price >= min && item.price <= max;
+      });
+    }
+
+    // Sort items
+    items.sort((a, b) => {
+      let aValue = a[filters.sortBy];
+      let bValue = b[filters.sortBy];
+      
+      if (filters.sortBy === 'name') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+      
+      if (filters.sortOrder === 'asc') {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
+
+    return items;
+  };
+
+  const filteredItems = getFilteredItems();
 
   const handleAddToCart = (item) => {
     if (!isLoggedIn) {
@@ -176,6 +229,16 @@ const Index = () => {
       title: "Added to cart",
       description: `${item.name} has been added to your cart`,
     });
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setIsLoading(true);
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
+    
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   const renderStars = (rating) => {
@@ -349,6 +412,12 @@ const Index = () => {
             </div>
           </section>
 
+          {/* Quick Reorder Section for logged in users */}
+          {isLoggedIn && <QuickReorder />}
+
+          {/* Loyalty Rewards Section */}
+          <LoyaltyRewards />
+
           {/* Featured Products Section */}
           <FeaturedProducts />
 
@@ -430,37 +499,33 @@ const Index = () => {
             Fresh Meat Menu
           </h1>
 
-          {/* Search and Filter */}
-          <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-3 text-purple-400" size={20} />
-              <Input
-                placeholder="Search for meat..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white/5 backdrop-blur-md border border-purple-500/30 text-white placeholder-gray-400 focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/25"
-              />
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400"
-            >
-              <Filter size={16} />
-              Filters
-            </Button>
-          </div>
+          {/* Advanced Product Search */}
+          <ProductSearch 
+            onFilterChange={handleFilterChange}
+            categories={Object.keys(menuItems)}
+          />
 
           {/* Menu Categories */}
           <div className="flex justify-center mb-8">
             <div className="bg-white/5 backdrop-blur-md rounded-full p-2 flex space-x-2 border border-purple-500/20">
+              <Button
+                onClick={() => handleFilterChange({ selectedCategory: 'all' })}
+                variant={filters.selectedCategory === 'all' ? "default" : "ghost"}
+                className={`px-6 py-3 rounded-full transition-all duration-300 font-semibold ${
+                  filters.selectedCategory === 'all'
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/25'
+                    : 'text-purple-300 hover:bg-purple-500/20 hover:text-white'
+                }`}
+              >
+                All
+              </Button>
               {Object.keys(menuItems).map((category) => (
                 <Button
                   key={category}
-                  onClick={() => setCurrentCategory(category)}
-                  variant={currentCategory === category ? "default" : "ghost"}
+                  onClick={() => handleFilterChange({ selectedCategory: category })}
+                  variant={filters.selectedCategory === category ? "default" : "ghost"}
                   className={`px-6 py-3 rounded-full transition-all duration-300 font-semibold ${
-                    currentCategory === category
+                    filters.selectedCategory === category
                       ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/25'
                       : 'text-purple-300 hover:bg-purple-500/20 hover:text-white'
                   }`}
@@ -471,40 +536,76 @@ const Index = () => {
             </div>
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="py-16">
+              <LoadingSpinner 
+                size="lg" 
+                type="meat" 
+                message="Finding the freshest meat for you..." 
+              />
+            </div>
+          )}
+
           {/* Menu Items */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItems.map((item) => (
-              <Card key={item.id} className="bg-white/5 backdrop-blur-md border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-105 overflow-hidden shadow-2xl hover:shadow-purple-500/20">
-                <div className="h-48 overflow-hidden relative">
-                  <img 
-                    src={item.image} 
-                    alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-white">{item.name}</h3>
-                  <p className="text-gray-300 mb-4 text-sm leading-relaxed">{item.description}</p>
-                  <div className="flex items-center justify-between mb-4">
-                    {renderStars(item.rating)}
-                    <span className="text-sm text-gray-400">({item.reviews} reviews)</span>
+          {!isLoading && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredItems.map((item) => (
+                <Card key={item.id} className="bg-white/5 backdrop-blur-md border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-105 overflow-hidden shadow-2xl hover:shadow-purple-500/20">
+                  <div className="h-48 overflow-hidden relative">
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                      ₹{item.price}/{item.unit}
-                    </span>
-                    <Button
-                      onClick={() => handleAddToCart(item)}
-                      className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/25 transition-all duration-300 hover:scale-105 border-0"
-                    >
-                      Add to Cart
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-2 text-white">{item.name}</h3>
+                    <p className="text-gray-300 mb-4 text-sm leading-relaxed">{item.description}</p>
+                    <div className="flex items-center justify-between mb-4">
+                      {renderStars(item.rating)}
+                      <span className="text-sm text-gray-400">({item.reviews} reviews)</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                        ₹{item.price}/{item.unit}
+                      </span>
+                      <Button
+                        onClick={() => handleAddToCart(item)}
+                        className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/25 transition-all duration-300 hover:scale-105 border-0"
+                      >
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* No Results */}
+          {!isLoading && filteredItems.length === 0 && (
+            <div className="text-center py-16">
+              <Search className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-white mb-2">No items found</h3>
+              <p className="text-gray-400 mb-6">
+                Try adjusting your search or filters to find what you're looking for.
+              </p>
+              <Button
+                onClick={() => handleFilterChange({
+                  searchQuery: '',
+                  selectedCategory: 'all',
+                  priceRange: 'all',
+                  sortBy: 'name',
+                  sortOrder: 'asc'
+                })}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/25"
+              >
+                Clear All Filters
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
