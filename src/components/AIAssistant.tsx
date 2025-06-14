@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +6,8 @@ import { MessageCircle, X, Send, Bot, User, Sparkles, CheckCircle, Clock } from 
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { useToast } from '@/hooks/use-toast';
+import { useUserOrders } from '@/hooks/useUserOrders';
+import { SoundEffects } from '@/utils/soundEffects';
 
 interface Message {
   id: string;
@@ -43,6 +44,7 @@ const AIAssistant = ({ onNavigateToTracking }: AIAssistantProps) => {
   const { user, isLoggedIn } = useAuth();
   const { cart, addToCart, getCartItemsCount } = useCart();
   const { toast } = useToast();
+  const { addOrder } = useUserOrders();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -73,41 +75,55 @@ const AIAssistant = ({ onNavigateToTracking }: AIAssistantProps) => {
     
     addMessage("🔄 Processing your order... Please wait while I confirm everything!", true);
     
+    // Play processing sound
+    SoundEffects.playNotificationSound();
+    
     // Simulate order processing
     setTimeout(() => {
       addMessage("✅ Order Confirmed! 🎉", true);
+      SoundEffects.playSuccessSound();
       
       setTimeout(() => {
+        const orderId = Math.random().toString(36).substr(2, 5).toUpperCase();
+        const orderTime = new Date();
+        const estimatedDelivery = new Date(Date.now() + 25 * 60 * 1000); // 25 minutes from now
+        const orderTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+        // Create complete order object
+        const orderDetails = {
+          orderId,
+          items: [...cart],
+          total: orderTotal,
+          address: orderData.address || '',
+          phone: orderData.phone || '',
+          orderTime,
+          estimatedDelivery,
+          status: 'confirmed' as const,
+          deliveryPartner: {
+            name: 'Rahul Kumar',
+            phone: '+91 9876543210',
+            rating: 4.8,
+            deliveries: 245,
+            vehicleNumber: 'DL 01 AB 1234'
+          }
+        };
+
+        // Add order to user orders context
+        addOrder(orderDetails);
+
         addMessage(`🚀 Great news! Your order has been successfully placed and confirmed!
 
 📋 Order Details:
-• Order ID: #${Math.random().toString(36).substr(2, 5).toUpperCase()}
+• Order ID: #${orderId}
 • Items: ${getCartItemsCount()} items from your cart
 • Phone: ${orderData.phone}
 • Address: ${orderData.address}
-• Total: ₹${cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}
+• Total: ₹${orderTotal.toFixed(2)}
 
 ⏰ Estimated Delivery: 25-30 minutes
 🚚 Status: Order Confirmed → Preparing
 
 I'm now redirecting you to the order tracking page where you can monitor your order in real-time!`, true);
-
-        // Store order details for tracking
-        const orderDetails = {
-          orderId: Math.random().toString(36).substr(2, 5).toUpperCase(),
-          phone: orderData.phone,
-          address: orderData.address,
-          items: cart,
-          total: cart.reduce((total, item) => total + (item.price * item.quantity), 0),
-          orderTime: new Date(),
-          status: 'confirmed'
-        };
-        
-        localStorage.setItem('currentOrder', JSON.stringify(orderDetails));
-        localStorage.setItem('tempOrderData', JSON.stringify({
-          phone: orderData.phone,
-          address: orderData.address
-        }));
 
         toast({
           title: "Order Confirmed! 🎉",
@@ -129,6 +145,7 @@ I'm now redirecting you to the order tracking page where you can monitor your or
   const handleSendMessage = () => {
     if (!inputValue.trim() || isProcessingOrder) return;
 
+    SoundEffects.playClickSound();
     addMessage(inputValue, false);
     const userInput = inputValue.toLowerCase();
     setInputValue('');
@@ -179,7 +196,11 @@ Everything looks perfect! Would you like me to confirm and place this order? Jus
     <div className="fixed bottom-6 right-6 z-50">
       {!isOpen && (
         <Button
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            SoundEffects.playClickSound();
+            setIsOpen(true);
+          }}
+          onMouseEnter={() => SoundEffects.playHoverSound()}
           className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600 text-white rounded-full w-16 h-16 shadow-2xl shadow-purple-500/50 transition-all duration-300 hover:scale-110 animate-pulse border-0"
         >
           <div className="relative">
@@ -211,7 +232,10 @@ Everything looks perfect! Would you like me to confirm and place this order? Jus
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                SoundEffects.playClickSound();
+                setIsOpen(false);
+              }}
               className="text-white hover:bg-white/10 rounded-full"
               disabled={isProcessingOrder}
             >

@@ -1,6 +1,8 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { SoundEffects } from "@/utils/soundEffects"
 
 import { cn } from "@/lib/utils"
 
@@ -37,15 +39,49 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  soundEffect?: 'click' | 'success' | 'hover' | 'notification' | 'none'
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, soundEffect = 'click', onClick, onMouseEnter, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (soundEffect !== 'none') {
+        switch (soundEffect) {
+          case 'click':
+            SoundEffects.playClickSound();
+            break;
+          case 'success':
+            SoundEffects.playSuccessSound();
+            break;
+          case 'notification':
+            SoundEffects.playNotificationSound();
+            break;
+        }
+      }
+      
+      if (onClick) {
+        onClick(e);
+      }
+    };
+    
+    const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (soundEffect === 'hover') {
+        SoundEffects.playHoverSound();
+      }
+      
+      if (onMouseEnter) {
+        onMouseEnter(e);
+      }
+    };
+    
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
         {...props}
       />
     )
