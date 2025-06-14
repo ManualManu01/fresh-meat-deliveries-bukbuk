@@ -1,3 +1,4 @@
+import React from 'react';
 
 // Sound effect utilities for button interactions
 export class SoundEffects {
