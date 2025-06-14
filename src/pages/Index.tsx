@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { Utensils, Clock, Star, Truck, Phone, Mail, MapPin, Search, Filter } from 'lucide-react';
+import { Utensils, Clock, Star, Truck, Phone, Mail, MapPin, Search, Filter, Zap, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import LoginModal from '@/components/LoginModal';
 import CartModal from '@/components/CartModal';
 import ProfilePage from '@/components/ProfilePage';
 import OrderTracking from '@/components/OrderTracking';
+import WelcomeBanner from '@/components/WelcomeBanner';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import InstallPrompt from '@/components/InstallPrompt';
@@ -182,12 +184,16 @@ const Index = () => {
           <Star
             key={i}
             size={16}
-            className={`${i < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+            className={`${i < Math.floor(rating) ? 'text-yellow-400 fill-current drop-shadow-sm' : 'text-gray-500'}`}
           />
         ))}
-        <span className="text-sm text-gray-600 ml-1">{rating}</span>
+        <span className="text-sm text-gray-300 ml-1">{rating}</span>
       </div>
     );
+  };
+
+  const handleQuickOrder = () => {
+    setCurrentPage('menu');
   };
 
   if (currentPage === 'profile') {
@@ -199,26 +205,43 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      {/* Animated background particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute top-1/2 -right-4 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-1/3 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+      </div>
+
       {/* Navigation */}
-      <nav className="bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-40">
+      <nav className="bg-black/30 backdrop-blur-md border-b border-purple-500/20 shadow-2xl sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Utensils className="text-2xl text-red-600" />
-            <h1 className="text-2xl font-bold text-red-600">BukBuk</h1>
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 shadow-lg shadow-pink-500/25">
+              <Utensils className="text-2xl text-white" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              BukBuk
+            </h1>
           </div>
           <div className="flex items-center space-x-4">
             <Button
               variant={currentPage === 'home' ? 'default' : 'outline'}
               onClick={() => setCurrentPage('home')}
-              className={currentPage === 'home' ? 'bg-red-500 hover:bg-red-600' : ''}
+              className={currentPage === 'home' 
+                ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/25 border-0' 
+                : 'border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400 hover:text-purple-200'
+              }
             >
               Home
             </Button>
             <Button
               variant={currentPage === 'menu' ? 'default' : 'outline'}
               onClick={() => setCurrentPage('menu')}
-              className={currentPage === 'menu' ? 'bg-red-500 hover:bg-red-600' : ''}
+              className={currentPage === 'menu' 
+                ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/25 border-0' 
+                : 'border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400 hover:text-purple-200'
+              }
             >
               Menu
             </Button>
@@ -228,23 +251,25 @@ const Index = () => {
                 <Button
                   variant="outline"
                   onClick={() => setCurrentPage('profile')}
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400 hover:text-purple-200"
                 >
                   Profile
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setCurrentPage('tracking')}
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400 hover:text-purple-200"
                 >
                   Track Order
                 </Button>
                 <Button
                   onClick={() => setShowCartModal(true)}
-                  className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 relative"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 relative shadow-lg shadow-cyan-500/25 transition-all duration-300 hover:scale-105"
                 >
                   <div className="flex items-center gap-2">
                     Cart
                     {getCartItemsCount() > 0 && (
-                      <Badge className="bg-white text-red-600 ml-1">
+                      <Badge className="bg-yellow-400 text-black ml-1 animate-pulse">
                         {getCartItemsCount()}
                       </Badge>
                     )}
@@ -253,13 +278,17 @@ const Index = () => {
               </>
             )}
             {isLoggedIn ? (
-              <Button variant="outline" onClick={logout}>
+              <Button 
+                variant="outline" 
+                onClick={logout}
+                className="border-red-500/50 text-red-300 hover:bg-red-500/10 hover:border-red-400 hover:text-red-200"
+              >
                 Logout
               </Button>
             ) : (
               <Button
                 onClick={() => setShowLoginModal(true)}
-                className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                className="bg-gradient-to-r from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 text-white font-semibold shadow-lg shadow-pink-500/25 transition-all duration-300 hover:scale-105"
               >
                 Login / Sign Up
               </Button>
@@ -268,81 +297,96 @@ const Index = () => {
         </div>
       </nav>
 
+      {/* Welcome Banner for logged in users */}
+      {isLoggedIn && currentPage === 'home' && (
+        <WelcomeBanner onQuickOrder={handleQuickOrder} />
+      )}
+
       {/* HOME PAGE */}
       {currentPage === 'home' && (
         <>
           {/* Hero Section */}
           <section className="relative overflow-hidden py-20">
-            <div className="container mx-auto px-4 text-center">
+            <div className="container mx-auto px-4 text-center relative z-10">
               <div className="animate-fade-in">
-                <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent mb-6">
-                  BukBuk
+                <h1 className="text-6xl md:text-8xl font-bold mb-6">
+                  <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">
+                    Fresh Meat,
+                  </span>
+                  <br />
+                  <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
+                    Delivered Fast
+                  </span>
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-700 mb-8">
-                  Fresh Chicken, Mutton & Kabab Delivered to Your Door
+                <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                  Experience the future of meat delivery with premium quality, lightning-fast service, and cutting-edge technology
                 </p>
-                <div className="flex flex-wrap justify-center gap-4 mb-12">
-                  <Badge className="bg-green-100 text-green-800 px-4 py-2 text-lg">
-                    <Clock className="mr-2" size={16} />
+                <div className="flex flex-wrap justify-center gap-6 mb-12">
+                  <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-black px-6 py-3 text-lg shadow-lg shadow-green-500/25 border-0">
+                    <Clock className="mr-2" size={20} />
                     30 Min Delivery
                   </Badge>
-                  <Badge className="bg-blue-100 text-blue-800 px-4 py-2 text-lg">
-                    <Star className="mr-2" size={16} />
+                  <Badge className="bg-gradient-to-r from-blue-400 to-cyan-500 text-black px-6 py-3 text-lg shadow-lg shadow-blue-500/25 border-0">
+                    <Star className="mr-2" size={20} />
                     Premium Quality
                   </Badge>
-                  <Badge className="bg-purple-100 text-purple-800 px-4 py-2 text-lg">
-                    <Truck className="mr-2" size={16} />
+                  <Badge className="bg-gradient-to-r from-purple-400 to-pink-500 text-white px-6 py-3 text-lg shadow-lg shadow-purple-500/25 border-0">
+                    <Truck className="mr-2" size={20} />
                     Free Delivery
                   </Badge>
                 </div>
                 <Button
                   onClick={() => isLoggedIn ? setCurrentPage('menu') : setShowLoginModal(true)}
-                  className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-xl px-8 py-4 rounded-full shadow-2xl"
+                  className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 hover:from-pink-600 hover:via-purple-600 hover:to-cyan-600 text-white text-2xl px-12 py-6 rounded-full shadow-2xl shadow-pink-500/50 transition-all duration-300 hover:scale-110 hover:shadow-pink-500/75 animate-pulse border-0 font-bold"
                   size="lg"
                 >
+                  <Zap className="mr-3" size={28} />
                   Order Now
+                  <Sparkles className="ml-3" size={28} />
                 </Button>
               </div>
             </div>
           </section>
 
           {/* Features Section */}
-          <section className="py-16 bg-white/50">
+          <section className="py-16 relative">
             <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">Why Choose BukBuk?</h2>
+              <h2 className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+                Why Choose BukBuk?
+              </h2>
               <div className="grid md:grid-cols-3 gap-8">
-                <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                      <Star className="text-2xl text-red-600" />
+                <Card className="bg-white/5 backdrop-blur-md border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-purple-500/20">
+                  <CardContent className="p-8 text-center">
+                    <div className="mx-auto w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-yellow-500/25">
+                      <Star className="text-3xl text-white" />
                     </div>
-                    <h3 className="text-xl font-bold mb-4">Premium Quality</h3>
-                    <p className="text-gray-600">
-                      Fresh, halal-certified meat sourced from trusted suppliers with the highest quality standards.
+                    <h3 className="text-2xl font-bold mb-4 text-white">Premium Quality</h3>
+                    <p className="text-gray-300 leading-relaxed">
+                      Fresh, halal-certified meat sourced from trusted suppliers with the highest quality standards and advanced preservation technology.
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                      <Clock className="text-2xl text-green-600" />
+                <Card className="bg-white/5 backdrop-blur-md border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-cyan-500/20">
+                  <CardContent className="p-8 text-center">
+                    <div className="mx-auto w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-500/25">
+                      <Clock className="text-3xl text-white" />
                     </div>
-                    <h3 className="text-xl font-bold mb-4">Fast Delivery</h3>
-                    <p className="text-gray-600">
-                      Get your fresh meat delivered within 30 minutes to your doorstep with our express delivery service.
+                    <h3 className="text-2xl font-bold mb-4 text-white">Lightning Fast</h3>
+                    <p className="text-gray-300 leading-relaxed">
+                      AI-powered logistics and drone delivery technology ensures your fresh meat arrives within 30 minutes of ordering.
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                      <Truck className="text-2xl text-blue-600" />
+                <Card className="bg-white/5 backdrop-blur-md border border-pink-500/20 hover:border-pink-400/40 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-pink-500/20">
+                  <CardContent className="p-8 text-center">
+                    <div className="mx-auto w-20 h-20 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-blue-500/25">
+                      <Truck className="text-3xl text-white" />
                     </div>
-                    <h3 className="text-xl font-bold mb-4">Free Delivery</h3>
-                    <p className="text-gray-600">
-                      Enjoy free delivery on all orders above ₹500. No hidden charges, just fresh meat at your door.
+                    <h3 className="text-2xl font-bold mb-4 text-white">Smart Delivery</h3>
+                    <p className="text-gray-300 leading-relaxed">
+                      Free contactless delivery with real-time tracking, temperature monitoring, and secure packaging for ultimate freshness.
                     </p>
                   </CardContent>
                 </Card>
@@ -351,21 +395,23 @@ const Index = () => {
           </section>
 
           {/* Contact Section */}
-          <section className="py-16 bg-gradient-to-r from-red-600 to-orange-600 text-white">
+          <section className="py-16 bg-gradient-to-r from-purple-900/50 via-pink-900/50 to-purple-900/50 backdrop-blur-sm border-y border-purple-500/20">
             <div className="container mx-auto px-4 text-center">
-              <h2 className="text-3xl font-bold mb-8">Contact Us</h2>
+              <h2 className="text-4xl font-bold mb-8 bg-gradient-to-r from-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                Contact Us
+              </h2>
               <div className="flex flex-wrap justify-center gap-8">
-                <div className="flex items-center gap-2">
-                  <Phone size={20} />
-                  <span>+91 9876543210</span>
+                <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-full px-6 py-3 border border-purple-500/20">
+                  <Phone size={24} className="text-green-400" />
+                  <span className="text-white font-medium">+91 9876543210</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Mail size={20} />
-                  <span>order@bukbuk.com</span>
+                <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-full px-6 py-3 border border-purple-500/20">
+                  <Mail size={24} className="text-blue-400" />
+                  <span className="text-white font-medium">order@bukbuk.com</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <MapPin size={20} />
-                  <span>Delhi NCR</span>
+                <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-full px-6 py-3 border border-purple-500/20">
+                  <MapPin size={24} className="text-purple-400" />
+                  <span className="text-white font-medium">Delhi NCR</span>
                 </div>
               </div>
             </div>
@@ -375,26 +421,26 @@ const Index = () => {
 
       {/* MENU PAGE */}
       {currentPage === 'menu' && (
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+        <div className="container mx-auto px-4 py-8 relative z-10">
+          <h1 className="text-5xl font-bold text-center mb-8 bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
             Fresh Meat Menu
           </h1>
 
           {/* Search and Filter */}
           <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-3 text-purple-400" size={20} />
               <Input
                 placeholder="Search for meat..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white/5 backdrop-blur-md border border-purple-500/30 text-white placeholder-gray-400 focus:border-purple-400 focus:shadow-lg focus:shadow-purple-500/25"
               />
             </div>
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 hover:border-purple-400"
             >
               <Filter size={16} />
               Filters
@@ -403,16 +449,16 @@ const Index = () => {
 
           {/* Menu Categories */}
           <div className="flex justify-center mb-8">
-            <div className="bg-white/50 rounded-full p-1 flex space-x-1">
+            <div className="bg-white/5 backdrop-blur-md rounded-full p-2 flex space-x-2 border border-purple-500/20">
               {Object.keys(menuItems).map((category) => (
                 <Button
                   key={category}
                   onClick={() => setCurrentCategory(category)}
                   variant={currentCategory === category ? "default" : "ghost"}
-                  className={`px-6 py-2 rounded-full transition-all duration-300 ${
+                  className={`px-6 py-3 rounded-full transition-all duration-300 font-semibold ${
                     currentCategory === category
-                      ? 'bg-red-500 text-white'
-                      : 'text-red-600 hover:bg-red-50'
+                      ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/25'
+                      : 'text-purple-300 hover:bg-purple-500/20 hover:text-white'
                   }`}
                 >
                   {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -424,26 +470,29 @@ const Index = () => {
           {/* Menu Items */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map((item) => (
-              <Card key={item.id} className="hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden">
-                <div className="h-48 overflow-hidden">
+              <Card key={item.id} className="bg-white/5 backdrop-blur-md border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-105 overflow-hidden shadow-2xl hover:shadow-purple-500/20">
+                <div className="h-48 overflow-hidden relative">
                   <img 
                     src={item.image} 
                     alt={item.name}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{item.name}</h3>
-                  <p className="text-gray-600 mb-4">{item.description}</p>
+                  <h3 className="text-xl font-bold mb-2 text-white">{item.name}</h3>
+                  <p className="text-gray-300 mb-4 text-sm leading-relaxed">{item.description}</p>
                   <div className="flex items-center justify-between mb-4">
                     {renderStars(item.rating)}
-                    <span className="text-sm text-gray-500">({item.reviews} reviews)</span>
+                    <span className="text-sm text-gray-400">({item.reviews} reviews)</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-red-600">₹{item.price}/{item.unit}</span>
+                    <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                      ₹{item.price}/{item.unit}
+                    </span>
                     <Button
                       onClick={() => handleAddToCart(item)}
-                      className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                      className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg shadow-pink-500/25 transition-all duration-300 hover:scale-105 border-0"
                     >
                       Add to Cart
                     </Button>
